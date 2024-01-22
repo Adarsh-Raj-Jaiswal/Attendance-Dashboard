@@ -1,0 +1,7 @@
+Indexes -> single feild, compound index, multi-key index, text index
+Http caching
+Indexing is good for read intensive tasks not for write intensive tasks
+covered query
+sql index -> clustered and non-clustered
+Redis is Sexy
+Sharding
