@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
+    "@types/axios": "^0.14.0",
     "@types/react-redux": "^7.1.33",
     "axios": "^1.6.5",
+    "js-cookie": "^3.0.5",
+    "qrcode": "^1.5.3",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-datepicker": "^4.25.0",
     "react-dom": "^18.2.0",
@@ -23,6 +27,8 @@
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^18.2.43",
     "@types/react-datepicker": "^4.19.5",
     "@types/react-dom": "^18.2.17",

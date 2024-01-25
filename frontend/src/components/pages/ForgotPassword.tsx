@@ -1,18 +1,27 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { Link } from 'react-router-dom';
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { forgotPasssword } from "../../api-helper/api-helper";
 
 interface ForgotPasswordData {
-  [key: string]: string | string[];
+  [key: string]: string;
   email: string;
-  otp: string;
 }
 
 function ForgotPassword() {
-  const [forgotPasswordData, setForgotPasswordData] = useState<ForgotPasswordData>({
-    email: "",
-    otp: "",
-  });
+  const [forgotPasswordData, setForgotPasswordData] =
+    useState<ForgotPasswordData>({
+      email: "",
+    });
+
   const [errors, setErrors] = useState<Partial<ForgotPasswordData>>({});
+  const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (apiResponse) {
+      console.log(apiResponse);
+    }
+  }, [apiResponse]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,15 +37,8 @@ function ForgotPassword() {
     let valid = true;
     const newErrors: Partial<ForgotPasswordData> = {};
 
-    // Validate phone number
     if (!forgotPasswordData.email.trim()) {
       newErrors.email = "Please enter your email.";
-      valid = false;
-    }
-
-    // Validate OTP
-    if (!forgotPasswordData.otp.trim()) {
-      newErrors.otp = "Please enter your OTP.";
       valid = false;
     }
 
@@ -44,12 +46,21 @@ function ForgotPassword() {
     return valid;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Proceed with form submission
-      console.log("Forgot Password form submitted with data:", forgotPasswordData);
+      try {
+        setLoading(true);
+        const response = await forgotPasssword(forgotPasswordData.email);
+        console.log("API Response:", response); // Log the entire response for debugging
+        setApiResponse(response.data.message);
+      } catch (error: any) {
+        console.error("Error sending forgot password request:", error.message);
+        setApiResponse("Error sending forgot password request.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -71,7 +82,10 @@ function ForgotPassword() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-600">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-600"
+              >
                 Email
               </label>
               <input
@@ -82,40 +96,23 @@ function ForgotPassword() {
                 value={forgotPasswordData.email}
                 onChange={handleInputChange}
                 className={`mt-1 p-3 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300 ${
-                  errors.email ? 'border-red-500' : ''
+                  errors.email ? "border-red-500" : ""
                 }`}
               />
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
             </div>
-            <div className="mb-4">
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-600">
-                OTP
-              </label>
-              <input
-                placeholder="Enter your OTP"
-                type="password"
-                id="otp"
-                name="otp"
-                value={forgotPasswordData.otp}
-                onChange={handleInputChange}
-                className={`mt-1 p-3 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300 ${
-                  errors.otp ? 'border-red-500' : ''
-                }`}
-              />
-              {errors.otp && (
-                <p className="text-red-500 text-sm mt-1">{errors.otp}</p>
-              )}
-            </div>
 
-            <Link to="/reset-password">
-             <button
+            <button
               type="submit"
-              className="bg-orange-700 text-white p-3 rounded-md w-full hover:bg-orange-800 focus:outline-none focus:ring focus:border-blue-300"
-            >Submit
+              className={`bg-orange-700 text-white p-3 rounded-md w-full hover:bg-orange-800 focus:outline-none focus:ring focus:border-blue-300 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
             </button>
-            </Link>
 
             <div className="text-center mt-4">
               <Link to="/" className="text-blue-500 hover:underline">
@@ -126,8 +123,10 @@ function ForgotPassword() {
         </div>
       </div>
 
-      <div className="md:flex-1 bg-cover bg-center" style={{ backgroundImage: "url('/images/home-right.jpg')" }}>
-      </div>
+      <div
+        className="md:flex-1 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/home-right.jpg')" }}
+      ></div>
     </div>
   );
 }

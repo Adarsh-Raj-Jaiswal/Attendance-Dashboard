@@ -1,70 +1,70 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {  adminLogin } from "../../store/store";
+import { login } from "../../api-helper/api-helper";
 
-// Interface defining the shape of the login data
 interface LoginData {
-  [key: string]: string | string[];
   email: string;
   password: string;
 }
 
-function Login() {
-  // State hook to manage the login data and error messages
+function UserLogin() {
   const [loginData, setLoginData] = useState<LoginData>({
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState<Partial<LoginData>>({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Input change event handler
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    // Update the loginData state based on the input name and value
     setLoginData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  // Form submission event handler
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    // Check for errors
-    if (!loginData.email.trim()) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        email: "Please enter your email.",
-      }));
-    } else {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        email: "",
-      }));
+    if (!loginData.email.trim() || !loginData.password.trim()) {
+      setErrors({
+        email: !loginData.email.trim() ? "Please enter your email." : "",
+        password: !loginData.password.trim()
+          ? "Please enter your password."
+          : "",
+      });
+      return;
     }
 
-    if (!loginData.password.trim()) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "Please enter your password.",
-      }));
-    } else {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: "",
-      }));
-    }
+    try {
+      const response = await login(loginData.email, loginData.password);
+      console.log("Login successful. Token:", response.data.token);
 
-    // If no errors, proceed with form submission
-    if (!errors.email && !errors.password) {
-      console.log("Form submitted with data:", loginData);
+      const userType = response.data.user.type;
+
+      if (userType === "Admin") {
+        dispatch(adminLogin());
+        localStorage.setItem("adminId", response.data.user.id);
+        localStorage.setItem("token", response.data.token);
+        navigate("/");
+      } 
+      else {
+        console.error("Unknown user type:", userType);
+      }
+    } catch (error: any) {
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
-  // JSX
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <div
@@ -125,15 +125,12 @@ function Login() {
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
             </div>
-            <Link to="/student-dashboard">
-              <button
-                type="submit"
-                className="bg-orange-700 text-white p-3 rounded-md w-full hover:bg-orange-800 focus:outline-none focus:ring focus:border-blue-300"
-              >
-                Login
-              </button>
-            </Link>
-
+            <button
+              type="submit"
+              className="bg-orange-700 text-white p-3 rounded-md w-full hover:bg-orange-800 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Login
+            </button>
             <div className="text-center mt-4">
               <Link
                 to="/forgot-password"
@@ -154,4 +151,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default UserLogin;

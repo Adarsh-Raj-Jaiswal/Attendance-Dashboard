@@ -1,71 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-interface Student {
-  id: number;
-  name: string;
-}
-
-interface AttendanceRecord {
-  date: string;
-  students: { id: number; status: string }[];
-}
+import axios, { AxiosResponse } from "axios";
+import { getAdminDayData } from "../../api-helper/api-helper";
 
 const AttendanceManagement: React.FC = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
 
-  // Dummy student data
-  const students: Student[] = [
-    { id: 1, name: "Ritika" },
-    { id: 2, name: "Adarsh" },
-  ];
+  const [attendanceCounts, setAttendanceCounts] = useState<
+    {
+      totalStudentsCount: number;
+      presentStudentsCount: number;
+      absentStudentsCount: number;
+    }[]
+  >([]);
 
-  // Dummy attendance data
-  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
+  useEffect(() => {
+    const fetchAttendanceCounts = async () => {
+      try {
+        const response: AxiosResponse<{
+          totalStudentsCount: number;
+          presentStudentsCount: number;
+          absentStudentsCount: number;
+        }> = await axios.get("/api/v1/admin/counts");
+        console.log("API Response:", response.data);
+        setAttendanceCounts([response.data]);
+      } catch (error: any) {
+        console.error(
+          "Failed to fetch counts data:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
 
-  const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+    fetchAttendanceCounts();
+  }, []);
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-    // Fetch attendance records for the selected date or initialize if not available
-    const formattedDate = date ? formatDate(date) : "";
-    const recordsForDate = attendanceRecords.find((record) => record.date === formattedDate);
-    if (recordsForDate) {
-      // Attendance records for the selected date already exist
-      setAttendanceRecords([...attendanceRecords]);
-    } else {
-      // Initialize attendance records for the selected date
-      const newRecords: AttendanceRecord = {
-        date: formattedDate,
-        students: students.map((student) => ({ id: student.id, status: "Absent" })),
-      };
-      setAttendanceRecords([...attendanceRecords, newRecords]);
-    }
-  };
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [attendanceData, setAttendanceData] = useState<{
+    length: number;
+    attendanceList: any[];
+  }>({
+    length: 0,
+    attendanceList: [],
+  });
+
+  useEffect(() => {
+    const fetchAttendanceData = async () => {
+      if (selectedDate) {
+        try {
+          const response = await getAdminDayData();
+          console.log('Attendance data for date:', response.data);
+          setAttendanceData(response.data);
+        } catch (error: any) {
+          console.error('Failed to fetch attendance data:', error.response ? error.response.data : error.message);
+        }
+      }
+    };
+  
+    fetchAttendanceData();
+  }, [selectedDate]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <button
-        className="md:hidden bg-orange-900 text-white p-2 rounded-md focus:outline-none"
+        className="md:hidden bg-slate-800 text-white p-2 rounded-md focus:outline-none"
         onClick={toggleMenu}
       >
         &#9776; {/* Hamburger icon */}
       </button>
 
       <nav
-        className={`bg-orange-900 text-white sticky w-full md:w-1/6 p-4 md:p-8 
+        className={`bg-slate-800 text-white sticky w-full md:w-1/6 p-4 md:p-8 
         ${isMenuOpen ? "block" : "hidden"} md:block`}
       >
         <Link to="/admin-dashboard">
@@ -77,7 +87,7 @@ const AttendanceManagement: React.FC = () => {
           <li className="mb-2 md:mb-6">
             <Link
               to="/student-management"
-              className="block p-2 hover:bg-orange-800 rounded-md"
+              className="bg-orange-800 block p-2 hover:bg-orange-800 rounded-md text-center"
             >
               Student Management
             </Link>
@@ -85,7 +95,7 @@ const AttendanceManagement: React.FC = () => {
           <li className="mb-2 md:mb-6">
             <Link
               to="/attendance-management"
-              className="block p-2 hover:bg-orange-800 rounded-md"
+              className="bg-orange-800 block p-2 hover:bg-orange-800 rounded-md text-center"
             >
               Attendance Management
             </Link>
@@ -93,45 +103,60 @@ const AttendanceManagement: React.FC = () => {
         </ul>
       </nav>
 
-      <div className="flex-grow p-4">
-        <div className="mb-4">
-          <DatePicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
-            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:border-orange-500"
-            placeholderText="Select a date"
-          />
-        </div>
+      <div className="md:w-5/6 p-8">
+        <h1 className="text-2xl font-bold mb-4">Attendance Management</h1>
 
-        {selectedDate && (
-          <div>
-            <h2 className="text-lg font-semibold mb-2">
-              Attendance Records for {formatDate(selectedDate)}
-            </h2>
-            <table className="w-full border-collapse border border-gray-300">
-              <thead>
-                <tr>
-                  <th className="bg-amber-100 border border-gray-400 border border-gray-300 p-2">Student Name</th>
-                  <th className="bg-amber-100 border border-gray-400 border border-gray-300 p-2">Status</th>
+        <table className="table-auto w-full border-collapse border border-gray-800">
+          <thead>
+            <tr className="bg-gray-800 text-white">
+              <th className="border p-2">Total Students</th>
+              <th className="border p-2">Present Students</th>
+              <th className="border p-2">Absent Students</th>
+            </tr>
+          </thead>
+          <tbody>
+            {attendanceCounts.map((count, index) => (
+              <tr key={index} className="border">
+                <td className="border p-2">{count.totalStudentsCount}</td>
+                <td className="border p-2">{count.presentStudentsCount}</td>
+                <td className="border p-2">{count.absentStudentsCount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div  className="flex flex-row md:flex-row h-screen">
+      <div >
+        <label>Select Date: </label>
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date: Date | null) => setSelectedDate(date)}
+        />
+      </div>
+      {selectedDate && (
+        <div>
+          <h2>Attendance Data for {selectedDate.toDateString()}</h2>
+          <p>Length: {attendanceData.length}</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendanceData.attendanceList.map((attendance, index) => (
+                <tr key={index}>
+                  <td>{attendance.name}</td>
+                  <td>{attendance.status}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {students.map((student) => {
-                  const status =
-                    attendanceRecords.find((record) => record.date === formatDate(selectedDate))
-                      ?.students.find((s) => s.id === student.id)?.status || "Absent";
-                  return (
-                    <tr key={student.id}>
-                      <td className="border border-gray-300 p-2">{student.name}</td>
-                      <td className="border border-gray-300 p-2">{status}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       </div>
     </div>
   );

@@ -1,46 +1,62 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAdminStudentsData } from "../../api-helper/api-helper";
 
+interface Student {
+  id: number;
+  name: string;
+  email: string;
+  number: number;
+  rollNumber: number;
+}
 const StudentManagement = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [students, setStudents] = useState([
-    { id: 1, name: "Ritika", email: "ritika@gmail.com", mobile: "1234567890", rollNo: "A123" },
-    { id: 2, name: "Adarsh", email: "adarsh@gmail.com", mobile: "9876543210", rollNo: "B456" },
-  ]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
 
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchStudentsData = async () => {
+      try {
+        const response = await getAdminStudentsData();
+        setStudents(response.data.students);
+      } catch (error: any) {
+        console.error("Error fetching student data:", error.message);
+        setError("Error fetching student data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudentsData();
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <button
-        className="md:hidden bg-orange-900 text-white p-2 rounded-md focus:outline-none"
+        className="md:hidden bg-slate-800 text-white p-2 rounded-md focus:outline-none"
         onClick={toggleMenu}
       >
         &#9776; {/* Hamburger icon */}
       </button>
 
       <nav
-        className={`bg-orange-900 text-white sticky w-full md:w-1/6 p-4 md:p-8 
+        className={`bg-slate-800 text-white sticky w-full md:w-1/6 p-4 md:p-8 
         ${isMenuOpen ? "block" : "hidden"} md:block`}
       >
-       <Link to="/admin-dashboard">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-4">
-          Dashboard
-        </h2>
+        <Link to="/admin-dashboard">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-4">
+            Dashboard
+          </h2>
         </Link>
         <ul>
-          
           <li className="mb-2 md:mb-6">
             <Link
               to="/student-management"
-              className="block p-2 hover:bg-orange-800 rounded-md"
+              className="bg-orange-800 block p-2 hover:bg-orange-800 rounded-md text-center"
             >
               Student Management
             </Link>
@@ -48,7 +64,7 @@ const StudentManagement = () => {
           <li className="mb-2 md:mb-6">
             <Link
               to="/attendance-management"
-              className="block p-2 hover:bg-orange-800 rounded-md"
+              className="bg-orange-800 block p-2 hover:bg-orange-800 rounded-md text-center"
             >
               Attendance Management
             </Link>
@@ -56,45 +72,34 @@ const StudentManagement = () => {
         </ul>
       </nav>
 
-      <div className="flex-grow p-4">
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by student name"
-            className="p-2 border border-gray-300 rounded-md"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+      <div className="md:w-5/6 p-4">
+        <h1 className="text-2xl font-bold mb-4">Student Management</h1>
 
-        <div className="overflow-x-auto">
-          {filteredStudents.length === 0 ? (
-            <p>No matching students found.</p>
-          ) : (
-            <table className="w-full table-auto">
-              <thead>
-                <tr>
-                  <th className="bg-amber-100 border border-gray-400 p-2">Student ID</th>
-                  <th className="bg-amber-100 border border-gray-400 p-2">Name</th>
-                  <th className="bg-amber-100 border border-gray-400 p-2">Email</th>
-                  <th className="bg-amber-100 border border-gray-400 p-2">Mobile Number</th>
-                  <th className="bg-amber-100 border border-gray-400 p-2">Roll No.</th>
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {!loading && !error && (
+          <table className="table-auto w-full border-collapse border border-gray-800">
+            <thead>
+              <tr className="bg-gray-800 text-white">
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Email</th>
+                <th className="border p-2">Mobile</th>
+                <th className="border p-2">Roll Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student, index) => (
+                <tr key={index} className="border">
+                  <td className="border p-2">{student.name}</td>
+                  <td className="border p-2">{student.email}</td>
+                  <td className="border p-2">{student.number}</td>
+                  <td className="border p-2">{student.rollNumber}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((student) => (
-                  <tr key={student.id}>
-                    <td className="border border-gray-300 p-2">{student.id}</td>
-                    <td className="border border-gray-300 p-2">{student.name}</td>
-                    <td className="border border-gray-300 p-2">{student.email}</td>
-                    <td className="border border-gray-300 p-2">{student.mobile}</td>
-                    <td className="border border-gray-300 p-2">{student.rollNo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

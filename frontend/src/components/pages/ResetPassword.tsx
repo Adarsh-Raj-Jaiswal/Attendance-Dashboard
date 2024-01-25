@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 interface ResetPasswordData {
   [key: string]: string | string[];
@@ -8,10 +8,12 @@ interface ResetPasswordData {
 }
 
 function ResetPassword() {
-  const [resetPasswordData, setResetPasswordData] = useState<ResetPasswordData>({
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [resetPasswordData, setResetPasswordData] = useState<ResetPasswordData>(
+    {
+      newPassword: "",
+      confirmPassword: "",
+    }
+  );
   const [errors, setErrors] = useState<Partial<ResetPasswordData>>({});
 
   const handleInputChange = (
@@ -38,7 +40,9 @@ function ResetPassword() {
     if (!resetPasswordData.confirmPassword.trim()) {
       newErrors.confirmPassword = "Please confirm your password.";
       valid = false;
-    } else if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
+    } else if (
+      resetPasswordData.newPassword !== resetPasswordData.confirmPassword
+    ) {
       newErrors.confirmPassword = "Passwords do not match.";
       valid = false;
     }
@@ -73,7 +77,10 @@ function ResetPassword() {
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-600">
+              <label
+                htmlFor="newPassword"
+                className="block text-sm font-medium text-gray-600"
+              >
                 New Password
               </label>
               <input
@@ -84,15 +91,20 @@ function ResetPassword() {
                 value={resetPasswordData.newPassword}
                 onChange={handleInputChange}
                 className={`mt-1 p-3 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300 ${
-                  errors.newPassword ? 'border-red-500' : ''
+                  errors.newPassword ? "border-red-500" : ""
                 }`}
               />
               {errors.newPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.newPassword}
+                </p>
               )}
             </div>
             <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-600"
+              >
                 Confirm Password
               </label>
               <input
@@ -103,21 +115,22 @@ function ResetPassword() {
                 value={resetPasswordData.confirmPassword}
                 onChange={handleInputChange}
                 className={`mt-1 p-3 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300 ${
-                  errors.confirmPassword ? 'border-red-500' : ''
+                  errors.confirmPassword ? "border-red-500" : ""
                 }`}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
-           
+
             <button
               type="submit"
               className="bg-orange-700 text-white p-3 rounded-md w-full hover:bg-orange-800 focus:outline-none focus:ring focus:border-blue-300"
             >
               Submit
             </button>
-            
 
             <div className="text-center mt-4">
               <Link to="/" className="text-blue-500 hover:underline">
@@ -128,8 +141,10 @@ function ResetPassword() {
         </div>
       </div>
 
-      <div className="md:flex-1 bg-cover bg-center" style={{ backgroundImage: "url('/images/home-right.jpg')" }}>
-      </div>
+      <div
+        className="md:flex-1 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/home-right.jpg')" }}
+      ></div>
     </div>
   );
 }
