@@ -8,10 +8,10 @@ import ErrorHandler from "../utils/errorHandler";
 export const getTodaysCounts = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const totalStudentsCount = await Student.countDocuments();
-
+    const date = new Date();
     // Get present students count
     const presentStudentsCount = await Attendance.countDocuments({
-      date: Date.now,
+      date: date,
       status: true,
     });
 

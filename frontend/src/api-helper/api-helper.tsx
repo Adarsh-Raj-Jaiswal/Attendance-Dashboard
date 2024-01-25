@@ -1,12 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import qrCode from "qrcode";
 
-axios.defaults.withCredentials = true;
-
-const api = axios.create({
-  baseURL: "http://localhost:5000",
-});
-
 //LogIn
 export const login = async (
   email: string,
@@ -14,43 +8,23 @@ export const login = async (
 ): Promise<AxiosResponse> => {
   try {
     const hash = "dummy";
-
+    const obj = { email, password, hash };
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
 
-    const response = await api.post(
-      "/api/v1/login",
-      { email, password, hash },
-      { withCredentials: true }
-    );
-    console.log("Login response:", response.data);
-
-    console.log("Cookies:", document.cookie);
-
-    const tokenCookie = response.headers?.["set-cookie"]?.find(
-      (cookie: string) => cookie.startsWith("token=")
-    );
-
-    if (tokenCookie) {
-      const token = tokenCookie.split("=")[1].split(";")[0];
-      localStorage.setItem("token", token);
-      console.log("Token stored:", token);
-    }
-
-    return response;
+    const config = { headers: { "Content-Type": "application/json" } };
+    const something = await axios.post("/api/v1/login", obj, config);
+    return something;
   } catch (error: any) {
     console.error("Login failed:", error);
     throw error;
   }
 };
 
-//Logout
+// Logout
 export const logout = async (): Promise<AxiosResponse> => {
   try {
-    const response = await api.get("/api/v1/logout");
-    console.log("Logout response:", response.data);
-
-    localStorage.removeItem("token");
+    const response = await axios.get("/api/v1/logout");
 
     return response;
   } catch (error: any) {
@@ -61,13 +35,15 @@ export const logout = async (): Promise<AxiosResponse> => {
     throw error;
   }
 };
+
 //Forgot Password
 export const forgotPasssword = async (
   email: string
 ): Promise<AxiosResponse> => {
   try {
-    const response = await api.post("/password/forgot", { email });
-    console.log(response.data);
+    const config = { headers: { "Content-Type": "application/json" } };
+    const response = await axios.post("/password/forgot", { email }, config);
+
     return response.data;
   } catch (error: any) {
     console.log("Failed", error.response ? error.response.data : error.message);
@@ -88,7 +64,7 @@ export const getAdminStudentsData = async (): Promise<
   >
 > => {
   try {
-    const response = await api.get("api/v1/admin/students");
+    const response = await axios.get("api/v1/admin/students");
 
     return response;
   } catch (error: any) {
@@ -129,7 +105,7 @@ export const getAdminDayData = async (): Promise<
   }>
 > => {
   try {
-    const response = await api.get("/api/v1/admin/day");
+    const response = await axios.get("/api/v1/admin/day");
     return response;
   } catch (error: any) {
     console.error(
@@ -149,8 +125,8 @@ export const qrcodegenerator = async (): Promise<
   >
 > => {
   try {
-    const response = await axios.get("/api/v1/attendance/qr");
-    console.log(response);
+    const response = await axios.get("/api/v1/qr/get");
+
     return response;
   } catch (error: any) {
     console.error(

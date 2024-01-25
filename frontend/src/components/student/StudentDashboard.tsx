@@ -8,9 +8,6 @@ import { login } from "../../api-helper/api-helper";
 const StudentDashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  // const [attendanceRecords, setAttendanceRecords] = useState<
-  //   { date: Date; status: "Present" | "Absent" }[]
-  // >([]);
 
   const [studentData, setStudentData] = useState({
     name: "",
@@ -66,18 +63,7 @@ const StudentDashboard = () => {
     }
   };
 
-  // const studentData = {
-  //   name: "Ritika Gajeshwar",
-  //   mobileNumber: "123-456-7890",
-  //   registrationNumber: "ABC123",
-  //   rollNumber: "1",
-  // };
 
-  // const attendanceData = {
-  //   totalDays: 30,
-  //   totalPresent: 20,
-  //   totalAbsent: 10,
-  // };
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -94,7 +80,7 @@ const StudentDashboard = () => {
   //         selectedDateAttendance.status
   //       }`
   //     );
-  //   } else {
+  //   } else { 
   //     alert(
   //       `No attendance record found for ${selectedDate?.toLocaleDateString()}`
   //     );

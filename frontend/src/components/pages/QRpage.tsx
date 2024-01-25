@@ -5,7 +5,7 @@ import { qrcodegenerator } from "../../api-helper/api-helper";
 
 //@ts-ignore
 const QRpage = () => {
-  const [text, setText] = useState();
+  const [text, setText] = useState("");
 
   useEffect(() => {
     const fetchqrcode = async () => {

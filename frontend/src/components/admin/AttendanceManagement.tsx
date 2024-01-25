@@ -22,11 +22,7 @@ const AttendanceManagement: React.FC = () => {
   useEffect(() => {
     const fetchAttendanceCounts = async () => {
       try {
-        const response: AxiosResponse<{
-          totalStudentsCount: number;
-          presentStudentsCount: number;
-          absentStudentsCount: number;
-        }> = await axios.get("/api/v1/admin/counts");
+        const response = await axios.get("/api/v1/admin/todaysCounts");
         console.log("API Response:", response.data);
         setAttendanceCounts([response.data]);
       } catch (error: any) {
@@ -54,14 +50,17 @@ const AttendanceManagement: React.FC = () => {
       if (selectedDate) {
         try {
           const response = await getAdminDayData();
-          console.log('Attendance data for date:', response.data);
+          console.log("Attendance data for date:", response.data);
           setAttendanceData(response.data);
         } catch (error: any) {
-          console.error('Failed to fetch attendance data:', error.response ? error.response.data : error.message);
+          console.error(
+            "Failed to fetch attendance data:",
+            error.response ? error.response.data : error.message
+          );
         }
       }
     };
-  
+
     fetchAttendanceData();
   }, [selectedDate]);
 
@@ -126,37 +125,37 @@ const AttendanceManagement: React.FC = () => {
         </table>
       </div>
 
-      <div  className="flex flex-row md:flex-row h-screen">
-      <div >
-        <label>Select Date: </label>
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date: Date | null) => setSelectedDate(date)}
-        />
-      </div>
-      {selectedDate && (
+      <div className="flex flex-row md:flex-row h-screen">
         <div>
-          <h2>Attendance Data for {selectedDate.toDateString()}</h2>
-          <p>Length: {attendanceData.length}</p>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendanceData.attendanceList.map((attendance, index) => (
-                <tr key={index}>
-                  <td>{attendance.name}</td>
-                  <td>{attendance.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <label>Select Date: </label>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date: Date | null) => setSelectedDate(date)}
+          />
         </div>
-      )}
+        {selectedDate && (
+          <div>
+            <h2>Attendance Data for {selectedDate.toDateString()}</h2>
+            <p>Length: {attendanceData.length}</p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendanceData.attendanceList.map((attendance, index) => (
+                  <tr key={index}>
+                    <td>{attendance.name}</td>
+                    <td>{attendance.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
