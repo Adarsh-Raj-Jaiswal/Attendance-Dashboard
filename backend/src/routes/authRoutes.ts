@@ -5,10 +5,15 @@ import {
   forgotPassword,
   resetPassword,
 } from "../controllers/authControllers";
+
 const router = express.Router();
 
-router.route("/login").post(login); // device id add krna hai
+router.route("/login").post(login);
+
 router.route("/logout").get(logout);
+
 router.route("/password/forgot").post(forgotPassword);
+
 router.route("/password/reset/:token").put(resetPassword);
+
 export default router;

@@ -2,10 +2,17 @@ import { NextFunction, Request, Response } from "express";
 import ErrorHandler from "../utils/errorHandler";
 import attendanceModel from "../models/attendanceModel";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors";
+import adminModel from "../models/adminModel";
+
 export const getQR = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
-    const hash = "a_random_dummy_hash";
+    const admin = await adminModel.findOne();
+    if (!admin) return next(new ErrorHandler("admin login kro", 400));
+
+    //@ts-ignore
+    const hash = admin.getQRHash();
+    await admin.save({ validateBeforeSave: false });
+
     res.json({
       success: true,
       hash,
@@ -15,20 +22,28 @@ export const getQR = catchAsyncErrors(
 
 export const scanQR = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { hash, studentId } = req.body;
+    //@ts-ignore
+    const studentId = req.user._id;
+    const { hash } = req.body;
     if (!hash) {
-      return next(new ErrorHandler("Not marked", 400));
+      return next(
+        new ErrorHandler("Qr not scanned unable to get the hash", 400)
+      );
     }
 
-    const present = true;
-    const admin = await attendanceModel.create({
+    const admin = await adminModel.findOne();
+    if (!admin) return next(new ErrorHandler("admin login kro", 400));
+    if (hash !== admin.qrHash) {
+      return next(new ErrorHandler("This QR code has expired", 400));
+    }
+
+    await attendanceModel.create({
       student: studentId,
-      status: present,
+      status: true,
     });
 
     res.json({
       success: true,
-      hash,
     });
   }
 );

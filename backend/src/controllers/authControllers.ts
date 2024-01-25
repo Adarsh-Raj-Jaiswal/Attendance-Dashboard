@@ -9,20 +9,8 @@ import crypto from "crypto";
 
 export const login = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    // import Fingerprint2 from "fingerprintjs2";
-
-    // // Generate a browser fingerprint
-    // Fingerprint2.get({}, function (components) {
-    //   const fingerprint = Fingerprint2.x64hash128(
-    //     components.map((pair) => pair.value).join(""),
-    //     31
-    //   );
-    //   console.log("Browser Fingerprint:", fingerprint);
-
-    //   // Now you can use the fingerprint for your application
-    // });
-
     const { email, password, hash } = req.body;
+
     if (!hash) {
       return next(new ErrorHandler("Device not supported", 400));
     }
@@ -51,7 +39,7 @@ export const login = catchAsyncErrors(
       return next(new ErrorHandler("Invalid email or password", 401));
     }
 
-    user.hash = hash;
+    user.deviceHash = hash;
     await user.save({ validateBeforeSave: false });
 
     sendToken(user, 200, res);
@@ -151,7 +139,7 @@ export const resetPassword = catchAsyncErrors(
     }
 
     if (req.body.password !== req.body.confirmPassword) {
-      return next(new ErrorHandler("Password does not password", 400));
+      return next(new ErrorHandler("Password does not match confirmPassword", 400));
     }
 
     user.password = req.body.password;

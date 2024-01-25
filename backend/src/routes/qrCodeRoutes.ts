@@ -1,10 +1,12 @@
 import express from "express";
 import { getQR, scanQR } from "../controllers/qrCodeControllers";
-import { isAuthenticatedUser } from "../middlewares/auth";
+import { authorizeRoles, isAuthenticatedUser } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.route("/attendance/qr").get(isAuthenticatedUser, getQR);
-router.route("/attendance/scan").post(isAuthenticatedUser, scanQR);
+router.route("/get").get(isAuthenticatedUser, authorizeRoles("Admin"), getQR);
+router
+  .route("/scan")
+  .post(isAuthenticatedUser, authorizeRoles("Student"), scanQR);
 
 export default router;

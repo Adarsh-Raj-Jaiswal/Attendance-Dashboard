@@ -14,7 +14,7 @@ const studentSchema = new Schema({
   email: {
     type: String,
     required: [true, "Please Enter Your Email"],
-    unique: true,
+    unique: [true, "Email already registered"],
     validate: [validator.isEmail, "Please Enter a valid Email"],
   },
   number: {
@@ -37,7 +37,7 @@ const studentSchema = new Schema({
     type: Number,
     unique: true,
   },
-  hash: String,
+  deviceHash: String,
   createdAT: {
     type: Date,
     default: Date.now,
@@ -65,10 +65,10 @@ studentSchema.pre("save", async function (next) {
 
 // // JWT TOKEN
 studentSchema.methods.getJWTToken = function () {
-  const object = { id: this._id, hash: this.hash };
+  const object = { id: this._id, hash: this.deviceHash };
   //@ts-ignore
   return jwt.sign(object, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE, // create a jwt token with _id
+    expiresIn: process.env.JWT_EXPIRE, // create a jwt token with _id and deviceHash
   });
 };
 

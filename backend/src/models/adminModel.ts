@@ -14,7 +14,7 @@ const adminSchema = new Schema({
   email: {
     type: String,
     required: [true, "Please Enter Your Email"],
-    unique: true,
+    unique: [true, "Email already registered"],
     validate: [validator.isEmail, "Please Enter a valid Email"],
   },
   number: {
@@ -33,7 +33,8 @@ const adminSchema = new Schema({
     type: String,
     default: "Admin",
   },
-  hash: String,
+  qrHash: String,
+  deviceHash: String,
   createdAT: {
     type: Date,
     default: Date.now,
@@ -56,7 +57,7 @@ adminSchema.pre("save", async function (next) {
 
 // // JWT TOKEN
 adminSchema.methods.getJWTToken = function () {
-  const object = { id: this._id, hash: this.hash };
+  const object = { id: this._id, hash: this.deviceHash };
   //@ts-ignore
   return jwt.sign(object, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
@@ -83,6 +84,16 @@ adminSchema.methods.getResetPasswordToken = function () {
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
   return resetToken;
+};
+adminSchema.methods.getQRHash = function () {
+  const hash = crypto
+    .createHash("sha256")
+    .update(crypto.randomBytes(20).toString("hex"))
+    .digest("hex");
+
+  this.qrHash = hash;
+
+  return hash;
 };
 
 export default mongoose.model("Admin", adminSchema);

@@ -3,15 +3,15 @@ import catchAsyncErrors from "../middlewares/catchAsyncErrors";
 import ApiFeatures from "../utils/apiFeatures";
 import Student from "../models/studentModel";
 import Attendance from "../models/attendanceModel";
+import ErrorHandler from "../utils/errorHandler";
 
-export const getCounts = catchAsyncErrors(
+export const getTodaysCounts = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const date = new Date("2024-01-20");
-
     const totalStudentsCount = await Student.countDocuments();
+
     // Get present students count
     const presentStudentsCount = await Attendance.countDocuments({
-      date: date,
+      date: Date.now,
       status: true,
     });
 
@@ -27,10 +27,13 @@ export const getCounts = catchAsyncErrors(
   }
 );
 
+// redis
 export const getAllStudents = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const currentPage = Number(req.query.page) || 1;
+
     const resultPerPage = 5;
+
     const skip = resultPerPage * (currentPage - 1);
 
     const students = await Student.find().limit(resultPerPage).skip(skip);
@@ -45,9 +48,15 @@ export const getAllStudents = catchAsyncErrors(
   }
 );
 
-export const search = catchAsyncErrors(
+export const searchStudent = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const word = req.body.word;
+    if (!word) {
+      return next(new ErrorHandler("Enter the word to be searched", 400));
+    }
+
+    // const cashedValue = await redis.get(word);
+
     const student = await Student.find({ name: word });
 
     res.json({
@@ -57,9 +66,13 @@ export const search = catchAsyncErrors(
   }
 );
 
-export const day = catchAsyncErrors(
+export const attendanceRecord = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const date = new Date("2024-01-20");
+    const date = req.body;
+
+    if (!date) {
+      return next(new ErrorHandler("Please provide date", 400));
+    }
 
     const attendanceList = await Attendance.find({
       date: date,
