@@ -14,6 +14,6 @@ router.route("/students").get(getAllStudents);
 
 router.route("/search").post(searchStudent);
 
-router.route("/day").get(attendanceRecord);
+router.route("/day").post(attendanceRecord);
 
 export default router;

@@ -32,9 +32,15 @@ export const scanQR = catchAsyncErrors(
     }
 
     const admin = await adminModel.findOne();
-    if (!admin) return next(new ErrorHandler("admin login kro", 400));
-    if (hash !== admin.qrHash) {
+    if (hash !== admin?.qrHash) {
       return next(new ErrorHandler("This QR code has expired", 400));
+    }
+
+    const attendance = await attendanceModel.findOne({ studentId });
+    if (attendance?.status) {
+      return res.json({
+        success: false,
+      });
     }
 
     await attendanceModel.create({

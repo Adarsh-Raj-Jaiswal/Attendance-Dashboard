@@ -1,13 +1,10 @@
-import { View } from "react-native";
-import styles from "../styles/resultStyles";
+import { Text, View } from "react-native";
 
 const Result = () => {
-  // check if marked, not marked
   return (
     <View>
-      <Text>Hello bhai kaise ho</Text>
+      <Text>Result</Text>
     </View>
   );
 };
-
 export default Result;

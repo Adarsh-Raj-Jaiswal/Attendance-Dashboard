@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "home-service-app",
-    "slug": "home-service-app",
+    "name": "mobile",
+    "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

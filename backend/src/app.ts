@@ -9,8 +9,11 @@ import path from "path";
 import errorMiddleware from "./middlewares/error";
 import attendanceModel from "./models/attendanceModel";
 import { authorizeRoles, isAuthenticatedUser } from "./middlewares/auth";
+//@ts-ignore
+import cors from "cors";
 
 const app: Express = express();
+app.use(cors());
 app.use(express.json());
 app.use(cookeiParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,8 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1", auth);
 app.use("/api/v1/admin", isAuthenticatedUser, authorizeRoles("Admin"), admin);
-app.use("/api/v1/student", isAuthenticatedUser, authorizeRoles("Student"), student);
-app.use("/api/v1/qr",qr);
+app.use(
+  "/api/v1/student",
+  isAuthenticatedUser,
+  authorizeRoles("Student"),
+  student
+);
+app.use("/api/v1/qr", qr);
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.resolve(__dirname, "../../frontend/build/index.html"));
