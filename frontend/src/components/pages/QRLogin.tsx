@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -52,7 +52,7 @@ function UserLogin() {
         dispatch(adminLogin());
         localStorage.setItem("adminId", response.data.user.id);
         localStorage.setItem("token", response.data.token);
-        navigate("/");
+        navigate("/qr-page");
       } 
       else {
         console.error("Unknown user type:", userType);

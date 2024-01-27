@@ -1,20 +1,68 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { logout } from "../../api-helper/api-helper";
 import { login } from "../../api-helper/api-helper";
+import { getMyCounts, checkStudentPresence } from "../../api-helper/api-helper";
+import { AxiosResponse } from "axios";
 
 const StudentDashboard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isPresent, setIsPresent] = useState<boolean | null>(null);
 
   const [studentData, setStudentData] = useState({
+    id: "",
     name: "",
     number: "",
     email: "",
     rollNumber: "",
   });
+
+  const [myCounts, setMyCounts] = useState<{
+    totalAttendanceDays: number;
+    presentDays: number;
+    absentDays: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response: AxiosResponse<{
+          totalAttendanceDays: number;
+          presentDays: number;
+          absentDays: number;
+        }> = await getMyCounts();
+
+        setMyCounts(response.data);
+      } catch (error: any) {
+        console.error("Error fetching data:", error.message);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchPresenceStatus = async () => {
+      try {
+        if (selectedDate) {
+          const formattedDate = selectedDate?.toISOString();
+          const studentId = studentData.id;
+          const response: AxiosResponse<{
+            success: boolean;
+            isPresent: boolean;
+          }> = await checkStudentPresence(studentId, formattedDate);
+
+          console.log("Presence status for date:", response.data);
+          setIsPresent(response.data.isPresent);
+        }
+      } catch (error: any) {
+        console.error("Error checking presence status:", error.message);
+      }
+    };
+
+    fetchPresenceStatus();
+  }, [selectedDate]);
 
   useEffect(() => {
     const userEmail = localStorage.getItem("email");
@@ -23,7 +71,7 @@ const StudentDashboard = () => {
     if (userEmail && userPassword) {
       login(userEmail, userPassword)
         .then((response) => {
-          console.log("Login API response:", response.data);
+          //console.log("Login API response:", response.data);
 
           const student = response.data;
 
@@ -32,6 +80,7 @@ const StudentDashboard = () => {
             console.log("Student details:", firstStudent);
 
             setStudentData({
+              id: firstStudent._id,
               name: firstStudent.name,
               number: firstStudent.number,
               email: firstStudent.email,
@@ -63,38 +112,18 @@ const StudentDashboard = () => {
     }
   };
 
-
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
-
-  // const viewAttendanceStatus = () => {
-  //   const selectedDateAttendance = attendanceRecords.find(
-  //     (record) => record.date === selectedDate
-  //   );
-
-  //   if (selectedDateAttendance) {
-  //     alert(
-  //       `On ${selectedDate?.toLocaleDateString()}, you were ${
-  //         selectedDateAttendance.status
-  //       }`
-  //     );
-  //   } else { 
-  //     alert(
-  //       `No attendance record found for ${selectedDate?.toLocaleDateString()}`
-  //     );
-  //   }
+  // const handleDateChange = (date: Date | null) => {
+  //   setSelectedDate(date);
   // };
 
   return (
     <div style={{ backgroundImage: "url('/images/bg-image.png')" }}>
-      <div className="flex flex-col md:flex-row h-screen">
+      <div className="overflow-x-hidden flex flex-col md:flex-row h-screen">
         <button
           className="md:hidden bg-slate-800 text-white p-2 rounded-md focus:outline-none"
           onClick={toggleMenu}
         >
-          &#9776; {/* Hamburger icon */}
+          &#9776;
         </button>
 
         <nav
@@ -107,15 +136,6 @@ const StudentDashboard = () => {
           </h2>
 
           <ul>
-            <li className="mb-2 md:mb-6">
-              <Link
-                to="/qr-code"
-                className="bg-blue-900 block p-2 hover:bg-blue-700 rounded-md text-center"
-              >
-                &#9745; Mark Attendance
-              </Link>
-            </li>
-
             <li
               className="mb-2 md:mb-6 bg-blue-900 block p-2 rounded-md text-center"
               onClick={handleLogout}
@@ -134,24 +154,28 @@ const StudentDashboard = () => {
             <table className="bg-blue-200 rounded-2xl text-center">
               <tbody>
                 <tr>
-                  <td className=" px-4 py-4 text-center">Name -</td>
+                  <td className="px-4 py-4 text-center font-bold">Name:</td>
                   <td className="px-4 py-4 text-center">{studentData.name}</td>
                 </tr>
                 <tr>
-                  <td className=" px-2 py-4 text-center">Mobile Number -</td>
-                  <td className="bg-white-100  px-2 py-4 text-center">
+                  <td className="px-2 py-4 text-center font-bold">
+                    Mobile Number:
+                  </td>
+                  <td className="px-2 py-4 text-center bg-white-100">
                     {studentData.number}
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-2 py-4 text-center">Email -</td>
-                  <td className="bg-white-100  px-2 py-4 text-center">
+                  <td className="px-2 py-4 text-center font-bold">Email:</td>
+                  <td className="px-2 py-4 text-center bg-white-100">
                     {studentData.email}
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-4 text-center">Roll Number -</td>
-                  <td className="bg-white-100  px-4 py-4 text-center">
+                  <td className="px-4 py-4 text-center font-bold">
+                    Roll Number:
+                  </td>
+                  <td className="px-4 py-4 text-center bg-white-100">
                     {studentData.rollNumber}
                   </td>
                 </tr>
@@ -171,19 +195,19 @@ const StudentDashboard = () => {
                 <tr>
                   <td className=" px-5 py-4 text-center">Total Days</td>
                   <td className="bg-white-100  px-5 py-4 text-center">
-                    {/* {attendanceData.totalDays} */}
+                    {myCounts?.totalAttendanceDays}
                   </td>
                 </tr>
                 <tr>
                   <td className=" px-4 py-5 text-center">Total Present</td>
                   <td className="bg-white-100 px-5 py-4 text-center">
-                    {/* {attendanceData.totalPresent} */}
+                    {myCounts?.presentDays}
                   </td>
                 </tr>
                 <tr>
                   <td className=" px-5 py-4 text-center">Total Absent</td>
                   <td className="bg-wgite-100  px-5 py-4 text-center">
-                    {/* {attendanceData.totalAbsent} */}
+                    {myCounts?.absentDays}
                   </td>
                 </tr>
               </tbody>
@@ -195,12 +219,12 @@ const StudentDashboard = () => {
         <div className="p-8 w-full md:w-1/3">
           <div className="bg-orange-200 p-14 rounded-3xl hover:bg-orange-100">
             <h2 className="text-xl font-bold mb-6 bg-orange-300 p-4 rounded-3xl text-center">
-              Calender
+              Calendar
             </h2>
-            <div className="mb-14  text-center ">
+            <div className="mb-14 text-center">
               <label
                 htmlFor="datepicker"
-                className="p-4  text-center  block text-sm font-medium text-black"
+                className="p-4 text-center block text-sm font-medium text-black"
               >
                 Select Date:
               </label>
@@ -208,17 +232,17 @@ const StudentDashboard = () => {
                 className="p-1 rounded-xl text-center bg-amber-400"
                 id="datepicker"
                 selected={selectedDate}
-                onChange={handleDateChange}
+                onChange={(date: Date | null) => setSelectedDate(date)}
                 dateFormat="MMMM d, yyyy"
               />
             </div>
-
-            {/* <button
-              onClick={viewAttendanceStatus}
-              className="bg-orange-700 text-white p-3 ml-7 rounded-md hover:bg-orange-600 focus:outline-none focus:ring focus:border-blue-300"
-            >
-              View Attendance
-            </button> */}
+            {isPresent !== null && (
+              <p className="text-orange-600 font-bold text-center">
+                {isPresent
+                  ? `You were present on ${selectedDate?.toLocaleDateString()}`
+                  : `You were absent on ${selectedDate?.toLocaleDateString()}`}
+              </p>
+            )}
           </div>
         </div>
       </div>

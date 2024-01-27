@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
+import { scanQR } from "../api-helper/api-helper";
 
 export default function App({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -13,18 +14,24 @@ export default function App({ navigation }) {
       setHasPermission(status === "granted");
     })();
   }, []);
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setData(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  const handleBarCodeScanned = ({ type, data }) => {
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get(API_URL);
+  //     setData(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    navigation.navigate("Result");
+    try {
+      const response = await scanQR("studentId", data);
+      console.log("Scan QR Response:", response);
+
+      navigation.navigate("Result");
+    } catch (error) {
+      console.error("Error scanning QR code:", error.message);
+    }
   };
 
   const renderCamera = () => {

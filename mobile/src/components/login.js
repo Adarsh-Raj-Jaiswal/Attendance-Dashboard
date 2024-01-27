@@ -9,27 +9,21 @@ import {
 import styles from "../styles/loginStyles";
 import { useState } from "react";
 import axios from "axios";
+import { login } from "../api-helper/api-helper";
 
 const Login = ({ navigation }) => {
   const [data, setData] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // also check if already marked attendance
   const onPressLogin = async () => {
-    // Do something about login operation
-    // login krna hai or successfull hai to next page
     try {
-      const hash = "dummy";
-      const obj = { email, password, hash };
-      const config = { headers: { "Content-Type": "application/json" } };
-      const response = await axios.post("/api/v1/login", obj, config);
-      setData(JSON.stringify(response.data));
+      const responseData = await login(email, password);
+      setData(JSON.stringify(responseData));
+      navigation.navigate("Scan");
     } catch (error) {
-      console.log(error.stack);
       setData(JSON.stringify(error));
     }
-    // navigation.navigate("Scan");
   };
 
   return (

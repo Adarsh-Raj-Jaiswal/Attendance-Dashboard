@@ -3,10 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store/store";
 import { adminActions, userActions } from "./store/store";
-import Login from "./components/pages/UserLogin";
 import ForgotPassword from "./components/pages/ForgotPassword";
 import ResetPassword from "./components/pages/ResetPassword";
-import AdminDashboard from "./components/admin/AdminDashboard";
 import StudentManagement from "./components/admin/StudentManagement";
 import AttendanceManagement from "./components/admin/AttendanceManagement";
 import StudentDashboard from "./components/student/StudentDashboard";
@@ -38,8 +36,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<UserLogin />} />
-        <Route path="/qr-page" element={<QRpage />} />
         <Route path="/qr" element={<QRLogin />} />
+      
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         {isUserLoggedIn && (
@@ -48,16 +46,13 @@ function App() {
             <Route path="/student-dashboard" element={<StudentDashboard />} />
           </>
         )}
-        {isAdminLoggedIn && (
-          <>
-            {" "}
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+         { isAdminLoggedIn && (
+        <>
+        {" "}
             <Route path="/student-management" element={<StudentManagement />} />
-            <Route
-              path="/attendance-management"
-              element={<AttendanceManagement />}
-            />
-          </>
+            <Route path="/attendance-management" element={<AttendanceManagement />} />
+            <Route path='/qr-page' element={<QRpage/>}/>
+            </>
         )}
       </Routes>
     </Router>

@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import qrCode from "qrcode";
 
 //LogIn
 export const login = async (
   email: string,
   password: string
 ): Promise<AxiosResponse> => {
-  try {
+  try 
+  {
     const hash = "dummy";
     const obj = { email, password, hash };
     localStorage.setItem("email", email);
@@ -15,7 +15,8 @@ export const login = async (
     const config = { headers: { "Content-Type": "application/json" } };
     const something = await axios.post("/api/v1/login", obj, config);
     return something;
-  } catch (error: any) {
+  } 
+  catch (error: any) {
     console.error("Login failed:", error);
     throw error;
   }
@@ -87,7 +88,7 @@ export const getAdminCounts = async (): Promise<
   >
 > => {
   try {
-    const response = await axios.get("/api/v1/admin/counts");
+    const response = await axios.get("/api/v1/admin/todaysCounts");
     return response;
   } catch (error: any) {
     console.error(
@@ -98,14 +99,14 @@ export const getAdminCounts = async (): Promise<
   }
 };
 //Get attendnace by day (admin)
-export const getAdminDayData = async (): Promise<
+export const getAdminDate = async (date: string): Promise<
   AxiosResponse<{
     length: number;
     attendanceList: any[];
   }>
 > => {
   try {
-    const response = await axios.get("/api/v1/admin/day");
+    const response = await axios.get(`/api/v1/admin/day?date=${date}`);
     return response;
   } catch (error: any) {
     console.error(
@@ -136,6 +137,48 @@ export const qrcodegenerator = async (): Promise<
     throw error;
   }
 };
+
+//Get attendnace Count (Student)
+export const getMyCounts = async (): Promise<
+  AxiosResponse<{
+    totalAttendanceDays: number;
+    presentDays: number;
+    absentDays: number;
+  }>
+> => {
+  try {
+    const response = await axios.get("/api/v1/student/myCounts");
+    console.log(response.data);
+    return response;
+  } catch (error: any) {
+    console.error(
+      "Failed to fetch my counts data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+//Check Attendance By Date
+export const checkStudentPresence = async (
+  studentId: string,
+  date: string
+): Promise<AxiosResponse<{ success: boolean; isPresent: boolean }>> => {
+  try {
+    const response = await axios.post('/api/v1/student/date', {
+      student: studentId,
+      date: date,
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error(
+      'Failed to check student presence:',
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
 
 // const deviceId = ${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height};
 //   const hash = crypto.createHash('sha256');
