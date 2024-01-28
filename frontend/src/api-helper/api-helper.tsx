@@ -7,7 +7,7 @@ export const login = async (
   password: string
 ): Promise<AxiosResponse> => {
   try {
-    const deviceId = `${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height}`;
+    //const deviceId = `${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height}`;
 
     //@ts-ignore
     // const hash = crypto.createHash("sha256").update(deviceId).digest("hex");
@@ -46,11 +46,29 @@ export const forgotPasssword = async (
 ): Promise<AxiosResponse> => {
   try {
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await axios.post("/password/forgot", { email }, config);
-
-    return response;
-  } catch (error: any) {
+    const response = await axios.post("/api/v1/password/forgot",{ email },config);
+    return response.data;
+  } 
+  catch (error: any) {
     console.log("Failed", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// Reset password
+export const resetPassword = async (
+  token: string,
+  newPassword: string,
+  confirmPassword: string): Promise<AxiosResponse> => {
+  try {
+    const config = { headers: { "Content-Type": "application/json" } };
+    const response = await axios.put(`/api/v1/password/reset/${token}`,
+      { password: newPassword, confirmPassword: confirmPassword },config);
+
+    return response.data;
+  } 
+  catch (error: any) {
+    console.error("Failed to reset password:",error.response ? error.response.data : error.message);
     throw error;
   }
 };
@@ -120,27 +138,19 @@ export const searchStudent = async (word: string) => {
 //Get attendnace by day (admin)
 export const getAdminDate = async (
   date: string
-): Promise<
-  AxiosResponse<{
-    success: boolean;
-    length: number;
-    attendanceList: any[];
-  }>
-> => {
+): Promise<AxiosResponse> => {
+
   try {
-    const response = await axios.get(`/api/v1/admin/day?date=${date}`);
-    console.log(response.data);
+    const config = { headers: { "Content-Type": "application/json" } };
+    const response = await axios.post(`/api/v1/admin/day?date=${date}`,config);
     return response;
-  } catch (error: any) {
-    console.error(
-      "Failed to fetch admin/day data:",
-      error.response ? error.response.data : error.message
-    );
+  } 
+  catch (error: any) {console.error("Failed to fetch admin/day data:",error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
-//QR Code
+//QR Code Generation
 export const qrcodegenerator = async (): Promise<
   AxiosResponse<
     {

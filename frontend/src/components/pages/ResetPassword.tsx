@@ -1,13 +1,14 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { resetPassword } from "../../api-helper/api-helper";
 
 interface ResetPasswordData {
-  [key: string]: string | string[];
   newPassword: string;
   confirmPassword: string;
 }
 
 function ResetPassword() {
+  const { token } = useParams(); // Extract token from URL parameters
   const [resetPasswordData, setResetPasswordData] = useState<ResetPasswordData>(
     {
       newPassword: "",
@@ -15,7 +16,17 @@ function ResetPassword() {
     }
   );
   const [errors, setErrors] = useState<Partial<ResetPasswordData>>({});
+  const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
+  console.log(apiResponse);
+  console.log(loading);
+
+  useEffect(() => {
+    console.log("Reset token from URL:", token);
+  }, [token]);
+
+  //Handle Input Changes
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -25,18 +36,16 @@ function ResetPassword() {
       [name]: value,
     }));
   };
-
+  //Validate form
   const validateForm = () => {
     let valid = true;
     const newErrors: Partial<ResetPasswordData> = {};
 
-    // Validate New Password
     if (!resetPasswordData.newPassword.trim()) {
       newErrors.newPassword = "Please enter your new password.";
       valid = false;
     }
 
-    // Validate Confirm Password
     if (!resetPasswordData.confirmPassword.trim()) {
       newErrors.confirmPassword = "Please confirm your password.";
       valid = false;
@@ -50,13 +59,28 @@ function ResetPassword() {
     setErrors(newErrors);
     return valid;
   };
-
-  const handleSubmit = (e: FormEvent) => {
+  //Handle Submit
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      // Handle the password reset logic here
-      console.log("Password reset successful!");
+    if (validateForm()) 
+    {
+      try {
+        setLoading(true);
+        const response = await resetPassword(
+          //@ts-ignore
+          token,
+          resetPasswordData.newPassword,
+          resetPasswordData.confirmPassword
+        );
+        console.log("API Response:", response);
+        setApiResponse(response.data.message);
+      } catch (error: any) {
+        console.error("Error resetting password:", error.message);
+        setApiResponse("Error resetting password.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

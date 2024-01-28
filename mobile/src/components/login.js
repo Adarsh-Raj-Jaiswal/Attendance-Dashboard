@@ -3,12 +3,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  FlatList,
-  ScrollView,
 } from "react-native";
 import styles from "../styles/loginStyles";
 import { useState } from "react";
-import axios from "axios";
 import { login } from "../api-helper/api-helper";
 
 const Login = ({ navigation }) => {
@@ -25,12 +22,12 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> Login Screen</Text>
+      <Text style={styles.title}> Login</Text>
 
       <View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
-          placeholder="Email"
+          placeholder="Enter your Email"
           placeholderTextColor="#003f5c"
           onChangeText={(text) => onChangeEmail(text)}
           value={email}
@@ -41,7 +38,7 @@ const Login = ({ navigation }) => {
         <TextInput
           style={styles.inputText}
           secureTextEntry
-          placeholder="Password"
+          placeholder="Enter your Password"
           placeholderTextColor="#003f5c"
           onChangeText={(text) => onChangePassword(text)}
           value={password}
@@ -49,7 +46,7 @@ const Login = ({ navigation }) => {
       </View>
 
       <TouchableOpacity onPress={onPressLogin} style={styles.loginBtn}>
-        <Text style={styles.loginText}>LOGIN </Text>
+        <Text style={styles.loginText}>Login </Text>
       </TouchableOpacity>
     </View>
   );
