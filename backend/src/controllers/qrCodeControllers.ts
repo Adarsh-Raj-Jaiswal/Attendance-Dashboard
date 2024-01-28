@@ -37,6 +37,7 @@ export const scanQR = catchAsyncErrors(
     }
 
     const attendance = await attendanceModel.findOne({ studentId });
+    // if already marked
     if (attendance?.status) {
       return res.json({
         success: false,

@@ -36,7 +36,7 @@ export const isPresent = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     //@ts-ignore
     const studentId = req.user._id;
-    const date = req.body;
+    const date = new Date(req.body.date);
 
     if (!date) {
       return next(new ErrorHandler("Please provide date", 400));
@@ -44,7 +44,7 @@ export const isPresent = catchAsyncErrors(
 
     const attendanceRecord = await Attendance.findOne({
       student: studentId,
-      date: date,
+      date: { $gte: date, $lt: new Date(date.getTime() + 24 * 60 * 60 * 1000) },
     });
 
     let success, isPresent;
