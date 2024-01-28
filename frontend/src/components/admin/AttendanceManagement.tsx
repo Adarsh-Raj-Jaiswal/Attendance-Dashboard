@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import React from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 import {
   getAdminDate,
@@ -43,9 +48,11 @@ const AttendanceManagement = () => {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [attendanceData, setAttendanceData] = useState<{
+    success: boolean;
     length: number;
     attendanceList: any[];
   }>({
+    success: false,
     length: 0,
     attendanceList: [],
   });
@@ -104,7 +111,20 @@ const AttendanceManagement = () => {
       console.error("Logout failed:", error);
     }
   };
-
+  const absentCount = 10;
+  const presentCount = 20;
+  const data = {
+    labels: ["Absent", "Present"],
+    datasets: [
+      {
+        label: "# of Students",
+        data: [absentCount, presentCount],
+        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(75, 192, 192, 0.2)"],
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(75, 192, 192, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <button
@@ -144,7 +164,10 @@ const AttendanceManagement = () => {
       <div className="md:w-5/6 p-8">
         <h1 className="text-2xl font-bold mb-4">Attendance Management</h1>
 
-        <table className="table-auto w-full border-collapse border border-gray-800">
+        {/* <div>
+          <Doughnut data={data} />;
+        </div> */}
+        {/* <table className="table-auto w-full border-collapse border border-gray-800">
           <thead>
             <tr className="bg-gray-800 text-white">
               <th className="border p-2">Total Students</th>
@@ -161,7 +184,7 @@ const AttendanceManagement = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
 
         <div className="flex flex-col mt-4">
           <label className="mb-2 font-bold text-blue-900">Select Date: </label>
@@ -191,7 +214,7 @@ const AttendanceManagement = () => {
                 <tbody>
                   {attendanceData.attendanceList.map((attendance, index) => (
                     <tr key={index} className="border">
-                      <td className="border p-2">{attendance.name}</td>
+                      <td className="border p-2">{attendance.student.name}</td>
                       <td className="border p-2">{attendance.status}</td>
                     </tr>
                   ))}

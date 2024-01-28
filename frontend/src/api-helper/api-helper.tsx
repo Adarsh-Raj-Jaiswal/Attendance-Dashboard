@@ -122,6 +122,7 @@ export const getAdminDate = async (
   date: string
 ): Promise<
   AxiosResponse<{
+    success: boolean;
     length: number;
     attendanceList: any[];
   }>

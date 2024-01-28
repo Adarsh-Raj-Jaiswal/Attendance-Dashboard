@@ -36,7 +36,8 @@ export const scanQR = catchAsyncErrors(
       return next(new ErrorHandler("This QR code has expired", 400));
     }
 
-    const attendance = await attendanceModel.findOne({ studentId });
+    const attendance = await attendanceModel.findOne({ student: studentId });
+    console.log(attendance);
     // if already marked
     if (attendance?.status) {
       return res.json({
