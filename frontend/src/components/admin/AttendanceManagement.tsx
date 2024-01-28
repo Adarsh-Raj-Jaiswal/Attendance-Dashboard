@@ -133,7 +133,7 @@ const AttendanceManagement = () => {
           </li>
 
           <li
-            className="mb-2 md:mb-6 bg-orange-800  hover:bg-orange-900 block p-2 rounded-md text-center"
+            className="mb-2 md:mb-6 bg-orange-800  cursor-pointer hover:bg-orange-900 block p-2 rounded-md text-center"
             onClick={handleLogout}
           >
             Logout

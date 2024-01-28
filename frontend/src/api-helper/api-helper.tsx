@@ -1,13 +1,17 @@
 import axios, { AxiosResponse } from "axios";
+// import crypto from "crypto";
 
 //LogIn
 export const login = async (
   email: string,
   password: string
 ): Promise<AxiosResponse> => {
-  try 
-  {
-    const hash = "dummy";
+  try {
+    const deviceId = `${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height}`;
+
+    //@ts-ignore
+    // const hash = crypto.createHash("sha256").update(deviceId).digest("hex");
+    const hash = "dumu";
     const obj = { email, password, hash };
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
@@ -15,8 +19,7 @@ export const login = async (
     const config = { headers: { "Content-Type": "application/json" } };
     const something = await axios.post("/api/v1/login", obj, config);
     return something;
-  } 
-  catch (error: any) {
+  } catch (error: any) {
     console.error("Login failed:", error);
     throw error;
   }
@@ -45,7 +48,7 @@ export const forgotPasssword = async (
     const config = { headers: { "Content-Type": "application/json" } };
     const response = await axios.post("/password/forgot", { email }, config);
 
-    return response.data;
+    return response;
   } catch (error: any) {
     console.log("Failed", error.response ? error.response.data : error.message);
     throw error;
@@ -53,7 +56,9 @@ export const forgotPasssword = async (
 };
 
 // Get All students (Admin)
-export const getAdminStudentsData = async (): Promise<
+export const getAdminStudentsData = async (
+  page: number
+): Promise<
   AxiosResponse<
     {
       id: number;
@@ -65,7 +70,7 @@ export const getAdminStudentsData = async (): Promise<
   >
 > => {
   try {
-    const response = await axios.get("api/v1/admin/students");
+    const response = await axios.get(`api/v1/admin/students?page=${page}`);
 
     return response;
   } catch (error: any) {
@@ -98,8 +103,24 @@ export const getAdminCounts = async (): Promise<
     throw error;
   }
 };
+// search student (admin)
+export const searchStudent = async (word: string) => {
+  try {
+    const config = { headers: { "Content-Type": "application/json" } };
+    const response = await axios.post("/api/v1/admin/search", { word }, config);
+    return response;
+  } catch (error: any) {
+    console.error(
+      "Failed to fetch counts data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
 //Get attendnace by day (admin)
-export const getAdminDate = async (date: string): Promise<
+export const getAdminDate = async (
+  date: string
+): Promise<
   AxiosResponse<{
     length: number;
     attendanceList: any[];
@@ -107,6 +128,7 @@ export const getAdminDate = async (date: string): Promise<
 > => {
   try {
     const response = await axios.get(`/api/v1/admin/day?date=${date}`);
+    console.log(response.data);
     return response;
   } catch (error: any) {
     console.error(
@@ -164,7 +186,7 @@ export const checkStudentPresence = async (
   date: string
 ): Promise<AxiosResponse<{ success: boolean; isPresent: boolean }>> => {
   try {
-    const response = await axios.post('/api/v1/student/date', {
+    const response = await axios.post("/api/v1/student/date", {
       student: studentId,
       date: date,
     });
@@ -172,17 +194,9 @@ export const checkStudentPresence = async (
     return response;
   } catch (error: any) {
     console.error(
-      'Failed to check student presence:',
+      "Failed to check student presence:",
       error.response ? error.response.data : error.message
     );
     throw error;
   }
 };
-
-
-// const deviceId = ${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height};
-//   const hash = crypto.createHash('sha256');
-//   hash.update(deviceId);
-//   const hashHex = hash.digest('hex');
-
-// ye hashHex ko daal dena email or password ke sath

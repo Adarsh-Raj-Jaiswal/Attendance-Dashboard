@@ -137,7 +137,7 @@ const StudentDashboard = () => {
 
           <ul>
             <li
-              className="mb-2 md:mb-6 bg-blue-900 block p-2 rounded-md text-center"
+              className="mb-2 md:mb-6 cursor-pointer bg-blue-900 block p-2 rounded-md text-center"
               onClick={handleLogout}
             >
               Logout

@@ -19,10 +19,14 @@ const attendanceModel_1 = __importDefault(require("../models/attendanceModel"));
 const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
 exports.getTodaysCounts = (0, catchAsyncErrors_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const totalStudentsCount = yield studentModel_1.default.countDocuments();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
     const date = new Date();
     // Get present students count
     const presentStudentsCount = yield attendanceModel_1.default.countDocuments({
-        date: date,
+        date: { $gte: todayStart, $lte: todayEnd },
         status: true,
     });
     // Get absent students count
@@ -61,12 +65,13 @@ exports.searchStudent = (0, catchAsyncErrors_1.default)((req, res, next) => __aw
     });
 }));
 exports.attendanceRecord = (0, catchAsyncErrors_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const date = req.body;
+    //@ts-ignore
+    const date = new Date(req.query.date);
     if (!date) {
         return next(new errorHandler_1.default("Please provide date", 400));
     }
     const attendanceList = yield attendanceModel_1.default.find({
-        date: date,
+        date: { $gte: date, $lt: new Date(date.getTime() + 24 * 60 * 60 * 1000) },
     }).populate("student", "name rollNumber email");
     const length = attendanceList.length;
     res.status(200).json({

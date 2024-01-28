@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getAdminStudentsData, logout } from "../../api-helper/api-helper";
+import {
+  getAdminStudentsData,
+  logout,
+  searchStudent,
+} from "../../api-helper/api-helper";
 
 interface Student {
   id: number;
@@ -16,6 +20,9 @@ const StudentManagement = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
+  const [lastPage, setLastPage] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchedStudent, setSearchedStudent] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -24,9 +31,15 @@ const StudentManagement = () => {
   useEffect(() => {
     const fetchStudentsData = async () => {
       try {
-        const response = await getAdminStudentsData();
+        const response = await getAdminStudentsData(currentPage);
         //@ts-ignore
         setStudents(response.data.students);
+        //@ts-ignore
+        if (response.data.studentCount != response.data.resultPerPage) {
+          setLastPage(true);
+        } else {
+          setLastPage(false);
+        }
       } catch (error: any) {
         console.error("Error fetching student data:", error.message);
         setError("Error fetching student data. Please try again.");
@@ -35,7 +48,15 @@ const StudentManagement = () => {
       }
     };
     fetchStudentsData();
-  }, []);
+  }, [students, searchedStudent]);
+
+  const handleSearchButton = async () => {
+    const response = await searchStudent(searchTerm);
+    const student = response.data.student[0];
+    console.log(student.name);
+    setFilteredStudents([student]);
+    setSearchedStudent(student);
+  };
 
   const handleLogout = async () => {
     try {
@@ -48,7 +69,12 @@ const StudentManagement = () => {
       console.error("Logout failed:", error);
     }
   };
-
+  const handlePrevPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -87,7 +113,7 @@ const StudentManagement = () => {
           </li>
 
           <li
-            className="mb-2 md:mb-6 bg-orange-800 hover:bg-orange-900 block p-2 rounded-md text-center"
+            className="mb-2 md:mb-6 bg-orange-800 cursor-pointer hover:bg-orange-900 block p-2 rounded-md text-center"
             onClick={handleLogout}
           >
             Logout
@@ -113,6 +139,13 @@ const StudentManagement = () => {
                 onChange={handleSearch}
                 className="p-2 border border-blue-500 focus:outline-none rounded-3xl focus:border-blue-700"
               />
+              <button
+                onClick={handleSearchButton}
+                disabled={lastPage}
+                className="bg-blue-500 text-white mx-4 px-4 py-2 rounded-full focus:outline-none"
+              >
+                Search
+              </button>
             </div>
             <table className="table-auto w-full border-collapse border border-gray-800">
               <thead>
@@ -146,15 +179,15 @@ const StudentManagement = () => {
 
             <div className="flex justify-between mt-4">
               <button
-                //onClick={handlePrevPage}
-                //disabled={currentPage === 1}
+                onClick={handlePrevPage}
+                disabled={currentPage == 1}
                 className="bg-blue-500 text-white px-4 py-2 rounded focus:outline-none"
               >
                 Previous
               </button>
               <button
-                //onClick={handleNextPage}
-                //disabled={currentPage === totalPages}
+                onClick={handleNextPage}
+                disabled={lastPage}
                 className="bg-blue-500 text-white px-4 py-2 rounded focus:outline-none"
               >
                 Next

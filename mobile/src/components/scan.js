@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
 import { scanQR } from "../api-helper/api-helper";
+import { useRoute } from "@react-navigation/native";
 
 export default function App({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -25,8 +26,7 @@ export default function App({ navigation }) {
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     try {
-      const response = await scanQR("studentId", data);
-      console.log("Scan QR Response:", response);
+      const response = await scanQR(data);
 
       navigation.navigate("Result");
     } catch (error) {

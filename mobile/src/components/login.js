@@ -12,18 +12,15 @@ import axios from "axios";
 import { login } from "../api-helper/api-helper";
 
 const Login = ({ navigation }) => {
+  const [email, onChangeEmail] = useState("");
+  const [password, onChangePassword] = useState("");
   const [data, setData] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const onPressLogin = async () => {
     try {
       const responseData = await login(email, password);
-      setData(JSON.stringify(responseData));
       navigation.navigate("Scan");
-    } catch (error) {
-      setData(JSON.stringify(error));
-    }
+    } catch (error) {}
   };
 
   return (
@@ -35,7 +32,8 @@ const Login = ({ navigation }) => {
           style={styles.inputText}
           placeholder="Email"
           placeholderTextColor="#003f5c"
-          onChangeText={(text) => setEmail({ email: text })}
+          onChangeText={(text) => onChangeEmail(text)}
+          value={email}
         />
       </View>
 
@@ -45,17 +43,14 @@ const Login = ({ navigation }) => {
           secureTextEntry
           placeholder="Password"
           placeholderTextColor="#003f5c"
-          onChangeText={(text) => setPassword({ password: text })}
+          onChangeText={(text) => onChangePassword(text)}
+          value={password}
         />
       </View>
 
       <TouchableOpacity onPress={onPressLogin} style={styles.loginBtn}>
         <Text style={styles.loginText}>LOGIN </Text>
       </TouchableOpacity>
-      <ScrollView style={styles.dummy}>
-        <Text selectable={true}>Data : {data}</Text>
-      </ScrollView>
-      <Text>last line</Text>
     </View>
   );
 };

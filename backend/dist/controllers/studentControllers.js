@@ -40,13 +40,13 @@ exports.getCounts = (0, catchAsyncErrors_1.default)((req, res, next) => __awaite
 exports.isPresent = (0, catchAsyncErrors_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const studentId = req.user._id;
-    const date = req.body;
+    const date = new Date(req.body.date);
     if (!date) {
         return next(new errorHandler_1.default("Please provide date", 400));
     }
     const attendanceRecord = yield attendanceModel_1.default.findOne({
         student: studentId,
-        date: date,
+        date: { $gte: date, $lt: new Date(date.getTime() + 24 * 60 * 60 * 1000) },
     });
     let success, isPresent;
     if (attendanceRecord) {

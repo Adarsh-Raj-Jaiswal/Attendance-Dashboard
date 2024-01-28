@@ -1,16 +1,21 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "172.27.160.1:5000",
+  baseURL: "https://attendancebackendservice.onrender.com",
 });
 
 //login
 export const login = async (email, password) => {
   try {
     const hash = "dummy";
-    const obj = { email, password, hash };
+    const obj = {
+      email: email,
+      password: password,
+      hash: hash,
+    };
     const config = { headers: { "Content-Type": "application/json" } };
     const response = await api.post("/api/v1/login", obj, config);
+    console.log(response.data);
     return response;
   } catch (error) {
     console.error("Error in login:", error.message);
@@ -19,11 +24,14 @@ export const login = async (email, password) => {
 };
 
 //Scan QR
-export const scanQR = async (studentId, hash) => {
+export const scanQR = async (hash) => {
   try {
-    const scanvalues = { studentId, hash };
+    const obj = {
+      hash: hash,
+    };
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.post("/api/v1/scanQR", scanvalues, config);
+    const response = await api.post("/api/v1/qr/scan", obj, config);
+    console.log(response.data);
     return response;
   } catch (error) {
     console.error("Error in scanQR:", error.message);
