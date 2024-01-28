@@ -11,7 +11,7 @@ import { login } from "../api-helper/api-helper";
 const Login = ({ navigation }) => {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
-  const [data, setData] = useState("");
+  //const [data, setData] = useState("");
 
   const onPressLogin = async () => {
     try {
