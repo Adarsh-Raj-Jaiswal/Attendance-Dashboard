@@ -1,17 +1,19 @@
 import axios, { AxiosResponse } from "axios";
 import { SHA256, enc } from "crypto-js";
 
+// axios.defaults.withCredentials = true;
 const api = axios.create({
+  withCredentials: true,
   baseURL: import.meta.env.VITE_BACKEND_URL,
 });
-
+// console.log(import.meta.env.VITE_BACKEND_URL)
 //LogIn
 export const login = async (email: string, password: string) => {
   try {
-    const deviceId = `${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height}`;
+    // const deviceId = `${navigator.userAgent}-${navigator.platform}-${window.screen.width}x${window.screen.height}`;
     //@ts-ignore
-    const hash = SHA256(deviceId).toString(enc.Hex);
-    // const hash = "dumu";
+    // const hash = SHA256(deviceId).toString(enc.Hex);
+    const hash = "dumu";
     const obj = { email: email, password: password, hash: hash };
 
     localStorage.setItem("email", email);
@@ -19,7 +21,7 @@ export const login = async (email: string, password: string) => {
 
     const config = { headers: { "Content-Type": "application/json" } };
 
-    const response = await api.post("/api/v1/login", obj, config);
+    const response = await api.post("/api/v1/login", obj);
 
     return response;
   } catch (error: any) {
@@ -49,11 +51,7 @@ export const forgotPasssword = async (
 ): Promise<AxiosResponse> => {
   try {
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.post(
-      "/api/v1/password/forgot",
-      { email },
-      config
-    );
+    const response = await api.post("/api/v1/password/forgot", { email });
 
     return response;
   } catch (error: any) {
@@ -73,11 +71,11 @@ export const resetPassword = async (
 ): Promise<AxiosResponse> => {
   try {
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.put(
-      `/api/v1/password/reset`,
-      { password: newPassword, confirmPassword: confirmPassword, token: token },
-      config
-    );
+    const response = await api.put(`/api/v1/password/reset`, {
+      password: newPassword,
+      confirmPassword: confirmPassword,
+      token: token,
+    });
 
     return response;
   } catch (error: any) {
@@ -141,7 +139,7 @@ export const getAdminCounts = async (): Promise<
 export const searchStudent = async (word: string) => {
   try {
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.post("/api/v1/admin/search", { word }, config);
+    const response = await api.post("/api/v1/admin/search", { word });
     return response;
   } catch (error: any) {
     console.error(
@@ -155,7 +153,7 @@ export const searchStudent = async (word: string) => {
 export const getAdminDate = async (date: string): Promise<AxiosResponse> => {
   try {
     const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.post(`/api/v1/admin/day?date=${date}`, config);
+    const response = await api.post(`/api/v1/admin/day?date=${date}`);
     return response;
   } catch (error: any) {
     console.error(
