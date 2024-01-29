@@ -113,7 +113,7 @@ const StudentDashboard = () => {
     <div
       className="m-2"
       style={{
-        backgroundImage: "url('/images/home-right.jpg')" ,
+        backgroundImage: "url('/images/home-right.jpg')",
         backgroundSize: "cover",
         margin: 0,
         padding: 0,
@@ -205,37 +205,38 @@ const StudentDashboard = () => {
             Attendance
           </h2>
           <div className="bg-orange-200 rounded-2xl text-center px-4">
-          <table className="m-5 ml-12  ">
-            <tbody>
-              <tr>
-                <td className=" px-5 py-4 text-center">Total Days</td>
-                <td className="bg-white-100  px-5 py-4 text-center">
-                  {myCounts?.totalAttendanceDays}
-                </td>
-              </tr>
-              <tr>
-                <td className=" px-4 py-5 text-center">Total Present</td>
-                <td className="bg-white-100 px-5 py-4 text-center">
-                  {myCounts?.presentDays}
-                </td>
-              </tr>
-              <tr>
-                <td className=" px-5 py-4 text-center">Total Absent</td>
-                <td className="bg-wgite-100  px-5 py-4 text-center">
-                  {myCounts?.absentDays}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <table className="m-5 ml-12  ">
+              <tbody>
+                <tr>
+                  <td className=" px-5 py-4 text-center">Total Days</td>
+                  <td className="bg-white-100  px-5 py-4 text-center">
+                    {myCounts?.totalAttendanceDays}
+                  </td>
+                </tr>
+                <tr>
+                  <td className=" px-4 py-5 text-center">Total Present</td>
+                  <td className="bg-white-100 px-5 py-4 text-center">
+                    {myCounts?.presentDays}
+                  </td>
+                </tr>
+                <tr>
+                  <td className=" px-5 py-4 text-center">Total Absent</td>
+                  <td className="bg-wgite-100  px-5 py-4 text-center">
+                    {myCounts?.absentDays}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
       {/* Logout Button */}
       <button
-        className="hover:bg-orange-300 cursor-pointer p-3 bg-orange-400  rounded-md text-center absolute bottom-9 right-4"
+        className="hover:bg-orange-500 cursor-pointer p-2 m-2 bg-orange-400 rounded-xl text-center mt-auto ml-auto"
         onClick={handleLogout}
-      >Logout
+      >
+        Logout
       </button>
     </div>
   );
