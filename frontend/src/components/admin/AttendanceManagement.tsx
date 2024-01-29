@@ -55,7 +55,7 @@ const AttendanceManagement = () => {
     fetchAttendanceCounts();
   }, []);
 
-  //Fetch attendance by Date
+  // Fetch attendance by Date
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
@@ -63,7 +63,11 @@ const AttendanceManagement = () => {
         setError(null);
 
         if (selectedDate) {
-          const formattedDate = selectedDate.toISOString().split("T")[0];
+          const formattedDate = selectedDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          });
           const response = await getAdminDate(formattedDate);
           console.log("Attendance data for date:", response.data);
           setAttendanceData(response.data);
@@ -147,12 +151,14 @@ const AttendanceManagement = () => {
         </ul>
       </nav>
 
-      <div className="md:w-5/6 p-8">
+      <div className="md:w-5/6 p-8 m-0">
         <h1 className="text-2xl font-bold mb-4">Attendance Management</h1>
-        <h2 className="text-blue-900 font-bold">Total Students - {attendanceCounts[0]?.totalStudentsCount || 0}</h2>
+        <h2 className="text-blue-900 font-bold">
+          Total Students - {attendanceCounts[0]?.totalStudentsCount || 0}
+        </h2>
 
-        <div className="md:w-7/6 p-8 flex flex-col md:flex-row">
-          <div className="md:w-1/2 mx-auto">
+        <div className="md:flex items-start mt-4 space-x-4">
+          <div className="md:w-1/2 mx-auto mb-4 md:mb-0">
             <Doughnut
               className="w-full"
               data={data}
@@ -161,8 +167,8 @@ const AttendanceManagement = () => {
             />
           </div>
 
-          <div className="md:w-1/4 m-14 mb-4 text-center mt-4 md:mt-0  bg-blue-100 rounded-3xl">
-            <div className="mt-1 ">
+          <div className="md:w-1/4 md:mb-4 text-center sticky p-8 rounded-3xl bg-blue-100">
+            <div className="mt-8  ">
               <label className=" font-bold text-blue-900 text-center ">
                 Select Date:{" "}
               </label>
@@ -174,7 +180,7 @@ const AttendanceManagement = () => {
             </div>
           </div>
 
-          <div className="md:w-1/2 mt-4 md:mt-0">
+          <div className="md:w-1/2">
             {loading && <p>Loading...</p>}
             {error && <p className="text-red-500">{error}</p>}
 
@@ -198,7 +204,9 @@ const AttendanceManagement = () => {
                         <td className="border p-2">
                           {attendance.student.name}
                         </td>
-                        <td className="border p-2">{attendance.status}</td>
+                        <td className="border p-2">
+                          {attendance.status ? "Present" : "Absent"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -210,6 +218,6 @@ const AttendanceManagement = () => {
       </div>
     </div>
   );
-};
+                    };
 
 export default AttendanceManagement;
