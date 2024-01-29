@@ -39,7 +39,7 @@ function App() {
         <Route path="/qr" element={<QRLogin />} />
       
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/password/reset/:token" element={<ResetPassword />} />
+        <Route path="/password/reset" element={<ResetPassword />} />
         {isUserLoggedIn && (
           <>
             {" "}

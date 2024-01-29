@@ -78,7 +78,7 @@ exports.forgotPassword = (0, catchAsyncErrors_1.default)((req, res, next) => __a
     const resetToken = user.getResetPasswordToken();
     yield user.save({ validateBeforeSave: false });
     const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetToken}`;
-    const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
+    const message = `Your password reset token is :- \n\n ${resetToken} \n\nIf you have not requested this email then, please ignore it.`;
     try {
         yield (0, sendEmail_1.default)({
             email: user.email,
@@ -101,7 +101,7 @@ exports.resetPassword = (0, catchAsyncErrors_1.default)((req, res, next) => __aw
     // creating token hash
     const resetPasswordToken = crypto_1.default
         .createHash("sha256")
-        .update(req.params.token)
+        .update(req.body.token)
         .digest("hex");
     let user;
     const admin = yield adminModel_1.default.findOne({

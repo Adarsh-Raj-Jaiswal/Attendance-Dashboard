@@ -83,7 +83,7 @@ export const forgotPassword = catchAsyncErrors(
       "host"
     )}/api/v1/password/reset/${resetToken}`;
 
-    const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
+    const message = `Your password reset token is :- \n\n ${resetToken} \n\nIf you have not requested this email then, please ignore it.`;
 
     try {
       await sendEmail({
@@ -112,7 +112,7 @@ export const resetPassword = catchAsyncErrors(
     // creating token hash
     const resetPasswordToken = crypto
       .createHash("sha256")
-      .update(req.params.token)
+      .update(req.body.token)
       .digest("hex");
 
     let user;
@@ -139,7 +139,9 @@ export const resetPassword = catchAsyncErrors(
     }
 
     if (req.body.password !== req.body.confirmPassword) {
-      return next(new ErrorHandler("Password does not match confirmPassword", 400));
+      return next(
+        new ErrorHandler("Password does not match confirmPassword", 400)
+      );
     }
 
     user.password = req.body.password;

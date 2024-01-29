@@ -1,29 +1,29 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+//@ts-ignore
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPasssword } from "../../api-helper/api-helper";
 
-interface ForgotPasswordData 
-{
+interface ForgotPasswordData {
   [key: string]: string;
   email: string;
 }
 
-  function ForgotPassword() {
-
+function ForgotPassword() {
   const navigate = useNavigate();
 
-  const [forgotPasswordData, setForgotPasswordData] =useState<ForgotPasswordData>({email: "",});
-   const [errors, setErrors] = useState<Partial<ForgotPasswordData>>({});
+  const [forgotPasswordData, setForgotPasswordData] =
+    useState<ForgotPasswordData>({ email: "" });
+  const [errors, setErrors] = useState<Partial<ForgotPasswordData>>({});
   const [apiResponse, setApiResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (apiResponse) {
       console.log(apiResponse);
     }
   }, [apiResponse]);
 
-  //Handle Input Changes 
+  //Handle Input Changes
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -51,25 +51,21 @@ interface ForgotPasswordData
     e.preventDefault();
 
     if (validateForm()) {
-      try 
-      {
+      try {
         setLoading(true);
         const response = await forgotPasssword(forgotPasswordData.email);
         console.log("API Response:", response);
         setApiResponse(response.data.message);
         const resetToken = response.data.resetToken;
-        navigate(`/reset-password/${resetToken}`);
-      } 
-      catch (error: any) 
-      {
+        navigate(`/password/reset`);
+      } catch (error: any) {
         console.error("Error sending forgot password request:", error.message);
         setApiResponse("Error sending forgot password request.");
-      } 
-      finally 
-      {
+      } finally {
         setLoading(false);
       }
     }
+    alert("Check your Inbox");
   };
 
   return (
