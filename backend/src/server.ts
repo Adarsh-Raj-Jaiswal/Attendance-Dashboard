@@ -1,6 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
 import app from "./app";
 import connectDatabase from "./database/database";
-import dotenv from "dotenv";
 
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
@@ -8,7 +9,6 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-dotenv.config();
 
 connectDatabase();
 

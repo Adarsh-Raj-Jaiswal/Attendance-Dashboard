@@ -9,5 +9,5 @@ const router = express_1.default.Router();
 router.route("/login").post(authControllers_1.login);
 router.route("/logout").get(authControllers_1.logout);
 router.route("/password/forgot").post(authControllers_1.forgotPassword);
-router.route("/password/reset/:token").put(authControllers_1.resetPassword);
+router.route("/password/reset").put(authControllers_1.resetPassword);
 exports.default = router;

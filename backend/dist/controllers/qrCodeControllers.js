@@ -40,7 +40,8 @@ exports.scanQR = (0, catchAsyncErrors_1.default)((req, res, next) => __awaiter(v
     if (hash !== (admin === null || admin === void 0 ? void 0 : admin.qrHash)) {
         return next(new errorHandler_1.default("This QR code has expired", 400));
     }
-    const attendance = yield attendanceModel_1.default.findOne({ studentId });
+    const attendance = yield attendanceModel_1.default.findOne({ student: studentId });
+    console.log(attendance);
     // if already marked
     if (attendance === null || attendance === void 0 ? void 0 : attendance.status) {
         return res.json({

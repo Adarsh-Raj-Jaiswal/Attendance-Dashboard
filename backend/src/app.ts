@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Express, Request, Response } from "express";
 import cookeiParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -13,7 +15,16 @@ import { authorizeRoles, isAuthenticatedUser } from "./middlewares/auth";
 import cors from "cors";
 
 const app: Express = express();
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(express.json());
 app.use(cookeiParser());
 app.use(bodyParser.urlencoded({ extended: true }));

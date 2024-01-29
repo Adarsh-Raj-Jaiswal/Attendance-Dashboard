@@ -1,18 +1,22 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+//@ts-ignore
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { resetPassword } from "../../api-helper/api-helper";
 
 interface ResetPasswordData {
   newPassword: string;
   confirmPassword: string;
+  resetToken: string;
 }
 
 function ResetPassword() {
+  const navigate = useNavigate();
   const { token } = useParams(); // Extract token from URL parameters
   const [resetPasswordData, setResetPasswordData] = useState<ResetPasswordData>(
     {
       newPassword: "",
       confirmPassword: "",
+      resetToken: "",
     }
   );
   const [errors, setErrors] = useState<Partial<ResetPasswordData>>({});
@@ -63,18 +67,19 @@ function ResetPassword() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) 
-    {
+    if (validateForm()) {
       try {
         setLoading(true);
         const response = await resetPassword(
           //@ts-ignore
-          token,
+
+          resetPasswordData.resetToken,
           resetPasswordData.newPassword,
           resetPasswordData.confirmPassword
         );
         console.log("API Response:", response);
         setApiResponse(response.data.message);
+        navigate('/')
       } catch (error: any) {
         console.error("Error resetting password:", error.message);
         setApiResponse("Error resetting password.");
@@ -146,6 +151,28 @@ function ResetPassword() {
                 <p className="text-red-500 text-sm mt-1">
                   {errors.confirmPassword}
                 </p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="resetToken"
+                className="block text-sm font-medium text-gray-600"
+              >
+                Reset Token
+              </label>
+              <input
+                placeholder="Enter Reset Token"
+                type="text"
+                id="resetToken"
+                name="resetToken"
+                value={resetPasswordData.resetToken}
+                onChange={handleInputChange}
+                className={`mt-1 p-3 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300 ${
+                  errors.resetToken ? "border-red-500" : ""
+                }`}
+              />
+              {errors.resetToken && (
+                <p className="text-red-500 text-sm mt-1">{errors.resetToken}</p>
               )}
             </div>
 
