@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 //@ts-ignore
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { resetPassword } from "../../api-helper/api-helper";
 
 interface ResetPasswordData {
@@ -10,6 +10,7 @@ interface ResetPasswordData {
 }
 
 function ResetPassword() {
+  const navigate = useNavigate();
   const { token } = useParams(); // Extract token from URL parameters
   const [resetPasswordData, setResetPasswordData] = useState<ResetPasswordData>(
     {
@@ -78,6 +79,7 @@ function ResetPassword() {
         );
         console.log("API Response:", response);
         setApiResponse(response.data.message);
+        navigate('/')
       } catch (error: any) {
         console.error("Error resetting password:", error.message);
         setApiResponse("Error resetting password.");
