@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
 import { scanQR } from "../api-helper/api-helper";
@@ -8,6 +8,7 @@ import { useRoute } from "@react-navigation/native";
 export default function App({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -18,12 +19,17 @@ export default function App({ navigation }) {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
+    setLoading(true);
     try {
       const response = await scanQR(data);
       console.log(response);
       navigation.navigate("Result");
     } catch (error) {
       console.error("Error scanning QR code:", error.message);
+      Alert.alert("Invalid QR Code");
+    }
+    finally {
+      setLoading(false); 
     }
   };
 
@@ -76,6 +82,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+  },
+  button:{
+    backgroundColor: "'#dbc1ac",
   },
   paragraph: {
     fontSize: 16,

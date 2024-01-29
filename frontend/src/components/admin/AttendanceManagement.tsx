@@ -149,9 +149,9 @@ const AttendanceManagement = () => {
 
       <div className="md:w-5/6 p-8">
         <h1 className="text-2xl font-bold mb-4">Attendance Management</h1>
-        <h2>Total Students - {attendanceCounts[0]?.totalStudentsCount || 0}</h2>
+        <h2 className="text-blue-900 font-bold">Total Students - {attendanceCounts[0]?.totalStudentsCount || 0}</h2>
 
-        <div className="md:w-5/6 p-8 flex flex-col md:flex-row">
+        <div className="md:w-7/6 p-8 flex flex-col md:flex-row">
           <div className="md:w-1/2 mx-auto">
             <Doughnut
               className="w-full"
@@ -161,7 +161,7 @@ const AttendanceManagement = () => {
             />
           </div>
 
-          <div className="md:w-1/4 m-5 mb-4 text-center mt-4 md:mt-0  bg-blue-100 rounded-3xl">
+          <div className="md:w-1/4 m-14 mb-4 text-center mt-4 md:mt-0  bg-blue-100 rounded-3xl">
             <div className="mt-1 ">
               <label className=" font-bold text-blue-900 text-center ">
                 Select Date:{" "}
