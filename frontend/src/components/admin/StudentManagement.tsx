@@ -27,7 +27,7 @@ const StudentManagement = () => {
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
-
+ //fetch student detail
   useEffect(() => {
     const fetchStudentsData = async () => {
       try {
@@ -50,6 +50,7 @@ const StudentManagement = () => {
     fetchStudentsData();
   }, [students, searchedStudent]);
 
+ //handle search
   const handleSearchButton = async () => {
     const response = await searchStudent(searchTerm);
     const student = response.data.student[0];
@@ -57,7 +58,7 @@ const StudentManagement = () => {
     setFilteredStudents([student]);
     setSearchedStudent(student);
   };
-
+  //logout
   const handleLogout = async () => {
     try {
       const response = await logout();
@@ -106,14 +107,14 @@ const StudentManagement = () => {
           <li className="mb-2 md:mb-6">
             <Link
               to="/attendance-management"
-              className="bg-orange-800 block p-2 hover:bg-orange-900 rounded-md text-center"
+              className="bg-blue-900 block p-2 hover:bg-blue-800 rounded-md text-center"
             >
               Attendance Management
             </Link>
           </li>
 
           <li
-            className="mb-2 md:mb-6 bg-orange-800 cursor-pointer hover:bg-orange-900 block p-2 rounded-md text-center"
+            className="mb-2 md:mb-6 bg-blue-900 cursor-pointer hover:bg-blue-800 block p-2 rounded-md text-center"
             onClick={handleLogout}
           >
             Logout
@@ -122,7 +123,7 @@ const StudentManagement = () => {
       </nav>
 
       <div className="md:w-5/6 p-4">
-        <h1 className="text-2xl font-bold mb-4">Student Management</h1>
+        <h1 className="text-2xl font-bold mb-4">Students Detail</h1>
 
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}

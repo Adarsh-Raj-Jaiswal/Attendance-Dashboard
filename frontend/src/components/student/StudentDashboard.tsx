@@ -24,7 +24,8 @@ const StudentDashboard = () => {
     presentDays: number;
     absentDays: number;
   } | null>(null);
-
+   
+  //fetch total counts 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,6 +43,7 @@ const StudentDashboard = () => {
     fetchData();
   }, []);
 
+  //Fetch student presence by date
   useEffect(() => {
     const fetchPresenceStatus = async () => {
       try {
@@ -63,7 +65,9 @@ const StudentDashboard = () => {
 
     fetchPresenceStatus();
   }, [selectedDate]);
+  
 
+  //student details fetch
   useEffect(() => {
     const userEmail = localStorage.getItem("email");
     const userPassword = localStorage.getItem("password");
@@ -71,8 +75,6 @@ const StudentDashboard = () => {
     if (userEmail && userPassword) {
       login(userEmail, userPassword)
         .then((response) => {
-          //console.log("Login API response:", response.data);
-
           const student = response.data;
 
           if (student) {
@@ -99,7 +101,7 @@ const StudentDashboard = () => {
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
-
+  //logout
   const handleLogout = async () => {
     try {
       const response = await logout();
@@ -111,10 +113,6 @@ const StudentDashboard = () => {
       console.error("Logout failed:", error);
     }
   };
-
-  // const handleDateChange = (date: Date | null) => {
-  //   setSelectedDate(date);
-  // };
 
   return (
     <div style={{ backgroundImage: "url('/images/bg-image.png')" }}>
@@ -147,7 +145,7 @@ const StudentDashboard = () => {
 
         {/* Student Details */}
         <div className="p-8 w-full md:w-1/3">
-          <div className="bg-blue-100 p-3 rounded-3xl hover:bg-blue-200">
+          <div className="bg-blue-200 p-3 rounded-3xl">
             <h2 className="mt-5 text-xl font-bold mb-6 bg-blue-300 p-4 rounded-3xl text-center">
               Student Details
             </h2>
@@ -186,7 +184,7 @@ const StudentDashboard = () => {
 
         {/* Attendance Summary */}
         <div className="p-8 w-full md:w-1/3">
-          <div className="bg-blue-100 p-12 rounded-3xl hover:bg-blue-200">
+          <div className="bg-blue-200 p-12 rounded-3xl">
             <h2 className="text-xl font-bold mb-6 bg-blue-300 p-4 rounded-3xl text-center">
               Attendance
             </h2>

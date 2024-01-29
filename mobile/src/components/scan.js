@@ -15,19 +15,12 @@ export default function App({ navigation }) {
       setHasPermission(status === "granted");
     })();
   }, []);
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get(API_URL);
-  //     setData(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
+
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     try {
       const response = await scanQR(data);
-
+      console.log(response);
       navigation.navigate("Result");
     } catch (error) {
       console.error("Error scanning QR code:", error.message);
@@ -59,15 +52,15 @@ export default function App({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to the Barcode Scanner App!</Text>
-      <Text style={styles.paragraph}>Scan a barcode to start your job.</Text>
+      <Text style={styles.title}> Barcode Scanner </Text>
+      <Text style={styles.paragraph}>Scan a barcode to mark your Attendance</Text>
       {renderCamera()}
       <TouchableOpacity
         style={styles.button}
         onPress={() => setScanned(false)}
         disabled={scanned}
       >
-        <Text style={styles.buttonText}>Scan QR to Start your job</Text>
+        <Text style={styles.buttonText}>Scan QR </Text>
       </TouchableOpacity>
     </View>
   );

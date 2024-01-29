@@ -2,52 +2,42 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#4FD3DA",
+    backgroundColor: "#dbc1ac",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: "#967259",
     marginBottom: 40,
   },
   inputView: {
     width: "80%",
-    backgroundColor: "#3AB4BA",
+    backgroundColor: "#ece0d1",
     borderRadius: 25,
-    height: 50,
+    height: 70,
     marginBottom: 20,
     justifyContent: "center",
     padding: 20,
   },
   inputText: {
-    height: 50,
-    color: "white",
-  },
-  forgotAndSignUpText: {
-    color: "white",
-    fontSize: 11,
+    height: 60,
+    color: "black",
   },
   loginBtn: {
     width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
+    backgroundColor: "#967159",
+    borderRadius: 30,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
     marginBottom: 10,
   },
-  dummy: {
-    width: "80%",
-    backgroundColor: "white",
-  },
-  item: {
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    marginVertical: 8,
-    borderRadius: 8,
+  loginText:{
+    color : "white",
+    fontSize: 20,
   },
 });
 export default styles;
