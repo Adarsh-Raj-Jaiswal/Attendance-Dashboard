@@ -121,7 +121,7 @@ const StudentManagement = () => {
           </li>
         </ul>
       </nav>
-
+      
       <div className="md:w-5/6 p-4">
         <h1 className="text-2xl font-bold mb-4">Students Detail</h1>
 
@@ -181,15 +181,15 @@ const StudentManagement = () => {
             <div className="flex justify-between mt-4">
               <button
                 onClick={handlePrevPage}
-                disabled={currentPage == 1}
-                className="bg-blue-500 text-white px-4 py-2 rounded focus:outline-none"
+                disabled={currentPage === 1}
+                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 Previous
               </button>
               <button
                 onClick={handleNextPage}
                 disabled={lastPage}
-                className="bg-blue-500 text-white px-4 py-2 rounded focus:outline-none"
+                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${lastPage ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 Next
               </button>

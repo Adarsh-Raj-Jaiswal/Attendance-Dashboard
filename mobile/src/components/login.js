@@ -11,13 +11,20 @@ import { login } from "../api-helper/api-helper";
 const Login = ({ navigation }) => {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
+  const [loading, setLoading] = useState(false);
   //const [data, setData] = useState("");
 
   const onPressLogin = async () => {
     try {
+      setLoading(true);
       const responseData = await login(email, password);
       navigation.navigate("Scan");
-    } catch (error) {}
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
