@@ -29,8 +29,11 @@ export const scanQR = async (hash) => {
     const obj = {
       hash: hash,
     };
-    const config = { headers: { "Content-Type": "application/json" } };
-    const response = await api.post("/api/v1/qr/scan", obj, config);
+    // const config = { headers: { "Content-Type": "application/json" } };
+    const response = await api.post("/api/v1/qr/scan", obj, {
+      withCredentials: true,
+      headers: { "Content-Type": "application/json" },
+    });
     console.log(response.data);
     return response;
   } catch (error) {

@@ -20,16 +20,17 @@ export default function App({ navigation }) {
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     setLoading(true);
+    let status;
     try {
       const response = await scanQR(data);
       console.log(response);
-      navigation.navigate("Result");
+      status = response.data.success;
     } catch (error) {
       console.error("Error scanning QR code:", error.message);
-      Alert.alert("Invalid QR Code");
-    }
-    finally {
-      setLoading(false); 
+      // Alert.alert("Invalid QR Code");
+    } finally {
+      navigation.navigate("Result", { status });
+      setLoading(false);
     }
   };
 
@@ -59,7 +60,9 @@ export default function App({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Barcode Scanner </Text>
-      <Text style={styles.paragraph}>Scan a barcode to mark your Attendance</Text>
+      <Text style={styles.paragraph}>
+        Scan a barcode to mark your Attendance
+      </Text>
       {renderCamera()}
       <TouchableOpacity
         style={styles.button}
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  button:{
+  button: {
     backgroundColor: "'#dbc1ac",
   },
   paragraph: {

@@ -37,13 +37,22 @@ exports.scanQR = (0, catchAsyncErrors_1.default)((req, res, next) => __awaiter(v
         return next(new errorHandler_1.default("Qr not scanned unable to get the hash", 400));
     }
     const admin = yield adminModel_1.default.findOne();
-    if (hash !== (admin === null || admin === void 0 ? void 0 : admin.qrHash)) {
+    //@ts-ignore
+    if (hash !== admin.qrHash) {
         return next(new errorHandler_1.default("This QR code has expired", 400));
     }
-    const attendance = yield attendanceModel_1.default.findOne({ student: studentId });
-    console.log(attendance);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    const date = new Date();
+    const attendance = yield attendanceModel_1.default.findOne({
+        student: studentId,
+        date: { $gte: todayStart, $lte: todayEnd },
+    });
+    // console.log(attendance);
     // if already marked
-    if (attendance === null || attendance === void 0 ? void 0 : attendance.status) {
+    if (attendance && attendance.status) {
         return res.json({
             success: false,
         });

@@ -18,9 +18,13 @@ const auth_1 = require("./middlewares/auth");
 //@ts-ignore
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ credentials: true, origin: process.env.CLIENT_URL }));
+app.use((0, cors_1.default)({
+    credentials: true,
+    origin: [process.env.CLIENT_URL, "http://localhost:5173"],
+}));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();

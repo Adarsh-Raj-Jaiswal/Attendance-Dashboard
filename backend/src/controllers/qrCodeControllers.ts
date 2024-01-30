@@ -32,14 +32,25 @@ export const scanQR = catchAsyncErrors(
     }
 
     const admin = await adminModel.findOne();
-    if (hash !== admin?.qrHash) {
+    //@ts-ignore
+    if (hash !== admin.qrHash) {
       return next(new ErrorHandler("This QR code has expired", 400));
     }
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    const date = new Date();
 
-    const attendance = await attendanceModel.findOne({ student: studentId });
-    console.log(attendance);
+    const attendance = await attendanceModel.findOne({
+      student: studentId,
+      date: { $gte: todayStart, $lte: todayEnd },
+    });
+
+    // console.log(attendance);
     // if already marked
-    if (attendance?.status) {
+
+    if (attendance && attendance.status) {
       return res.json({
         success: false,
       });
