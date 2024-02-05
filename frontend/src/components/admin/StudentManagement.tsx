@@ -27,7 +27,7 @@ const StudentManagement = () => {
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
- //fetch student detail
+  //fetch student detail
   useEffect(() => {
     const fetchStudentsData = async () => {
       try {
@@ -50,7 +50,7 @@ const StudentManagement = () => {
     fetchStudentsData();
   }, [students, searchedStudent]);
 
- //handle search
+  //handle search
   const handleSearchButton = async () => {
     const response = await searchStudent(searchTerm);
     const student = response.data.student[0];
@@ -113,15 +113,15 @@ const StudentManagement = () => {
             </Link>
           </li>
 
-          <li
+          <button
             className="mb-2 md:mb-6 bg-blue-900 cursor-pointer hover:bg-blue-800 block p-2 rounded-md text-center"
             onClick={handleLogout}
           >
             Logout
-          </li>
+          </button>
         </ul>
       </nav>
-      
+
       <div className="md:w-5/6 p-4">
         <h1 className="text-2xl font-bold mb-4">Students Detail</h1>
 
@@ -182,14 +182,18 @@ const StudentManagement = () => {
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 1}
-                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 Previous
               </button>
               <button
                 onClick={handleNextPage}
                 disabled={lastPage}
-                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${lastPage ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none ${
+                  lastPage ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 Next
               </button>

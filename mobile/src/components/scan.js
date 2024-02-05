@@ -86,9 +86,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: "'#dbc1ac",
-  },
   paragraph: {
     fontSize: 16,
     marginBottom: 40,

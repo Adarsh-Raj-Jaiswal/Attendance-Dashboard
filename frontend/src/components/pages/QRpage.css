@@ -2327,9 +2327,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   content: var(--tw-content);
 }
 
-.\[attr\:value\] {
+/* .\[attr\:value\] {
   attr: value;
-}
+} */
 
 .\[content\:\'hello\'\] {
   content: 'hello';
